@@ -4,7 +4,7 @@ const srcDir = path.join(__dirname, "..", "src");
 
 module.exports = {
     entry: {
-        content_script: path.join(srcDir, "content.ts"),
+        content_script: path.join(srcDir, "index.ts"),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

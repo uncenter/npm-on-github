@@ -1,4 +1,4 @@
-import { createCacheKey, getCache, setCache, PackageCache } from "./cache";
+import { createCacheKey, setCache, Cache } from "./cache";
 import { Stats, fetchStats } from "./stats";
 import { getOwnerRepo } from "./repo";
 
@@ -13,7 +13,7 @@ export async function resolvePrivatePackage(
 
     if (Math.floor(response.status / 100) === 4) {
         console.warn(
-            `[github-npm-stats] Couldn't find "${packageName}" in npm registry`
+            `[npm-on-github] Couldn't find "${packageName}" in npm registry`
         );
         return null;
     }
@@ -31,43 +31,54 @@ export async function resolvePrivatePackage(
 }
 
 export async function createPackage(owner: string, repo: string) {
+    console.log(`Fetching package.json for ${owner}/${repo} on GitHub...`);
     const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/package.json`
     );
+    let pkg: Cache;
 
     if (response.status === 403) {
         console.warn(
-            "[github-npm-stats] Error: Hourly GitHub api rate limit exceeded"
+            "[npm-on-github] Error: Hourly GitHub api rate limit exceeded"
         );
         return null;
+    } else if (response.status === 404) {
+        pkg = {
+            owner,
+            repo,
+            created: Date.now(),
+            name: undefined,
+            stats: undefined,
+        };
+    } else {
+        const packageJson = JSON.parse(atob((await response.json()).content));
+        let packageName = packageJson.name;
+
+        if (packageJson.private) {
+            packageName = await resolvePrivatePackage(owner, repo, packageName);
+        }
+
+        if (!packageName) {
+            console.warn(
+                `[npm-on-github] Couldn't find valid package.json for ${owner}/${repo} on GitHub`
+            );
+            pkg = {
+                owner,
+                repo,
+                created: Date.now(),
+                name: undefined,
+                stats: undefined,
+            };
+        } else {
+            pkg = {
+                owner,
+                repo,
+                created: Date.now(),
+                name: packageName,
+                stats: (await fetchStats(packageName)) as Stats,
+            };
+        }
     }
-
-    if (response.status === 404) {
-        return "N/A";
-    }
-
-    const responseBody = await response.json();
-    console.log(responseBody);
-    const packageJson = JSON.parse(atob(responseBody.content));
-    let packageName = packageJson.name;
-
-    if (!packageJson.name) {
-        packageName = "N/A";
-    }
-
-    if (packageJson.private) {
-        packageName = await resolvePrivatePackage(owner, repo, packageName);
-    }
-    if (!packageName) return null;
-
-    const timeCreated = Date.now();
-    const pkg: PackageCache = {
-        name: packageName,
-        owner,
-        repo,
-        created: timeCreated,
-        stats: (await fetchStats(packageName)) as Stats,
-    };
 
     setCache(createCacheKey(owner, repo), pkg);
 
