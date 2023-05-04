@@ -27,3 +27,7 @@ ul.pagehead-actions .npm-stats .select-menu-modal {
 ul.pagehead-actions .npm-stats details summary span {
     margin-right: 0.3rem;
 }
+
+ul.pagehead-actions .npm-stats chart#npm-stats-chart {
+    margin-block-end: 1em;
+}

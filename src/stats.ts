@@ -101,7 +101,7 @@ export function renderStats(packageName: string, stats: Stats) {
     const li = document.createElement("li");
     li.className = "npm-stats";
     li.innerHTML = `
-    <div data-view-component="true">
+    <div data-view-component="true" class="starred BtnGroup flex-1">
     <a href="https://www.npmjs.com/package/${packageName}" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="13px" viewBox="0 0 18 7">
         <path fill="#CB3837" d="M0,0h18v6H9v1H5V6H0V0z M1,5h2V2h1v3h1V1H1V5z M6,1v5h2V5h2V1H6z M8,2h1v2H8V2z M11,1v4h2V2h1v3h1V2h1v3h1V1H11z"/>
@@ -109,10 +109,20 @@ export function renderStats(packageName: string, stats: Stats) {
         <path fill="#FFFFFF" d="M6,1v5h2V5h2V1H6z M9,4H8V2h1V4z"/>
         <polygon fill="#FFFFFF" points="11,1 11,5 13,5 13,2 14,2 14,5 15,5 15,2 16,2 16,5 17,5 17,1 "/>
       </svg>
+      <span
+        aria-label="${stats.lastDay.toLocaleString()} NPM downloads in the last day"
+                data-singular-suffix="downloads in the last day"
+                data-plural-suffix="download in the last day"
+                data-turbo-replace="true"
+                title="${stats.lastDay.toLocaleString()}"
+                data-view-component="true"
+                class="Counter js-social-count"
+            >
+                ${stats.lastDay.toLocaleString()}
+            </span>
     </a>
     <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative">
-      <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="Toggle npm stats menu">
-        <span class="Counter js-social-count">${stats.lastDay.toLocaleString()}</span>
+      <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="View NPM downloads graph for ${packageName}">
         <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-triangle-down">
     <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
 </svg>
@@ -132,8 +142,7 @@ export function renderStats(packageName: string, stats: Stats) {
         <canvas id="npm-stats-chart"></canvas>
       </details-menu>
     </details>
-    <div data-view-component="true" class="BtnGroup d-flex">
-
+    </div>
   `;
     pageheadActions.appendChild(li);
 }
