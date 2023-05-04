@@ -98,6 +98,19 @@ export function renderStats(packageName: string, stats: Stats) {
 
     observer.observe(pageheadActions, { childList: true });
 
+    const shortenNumber = (num: number) => {
+        if (num >= 1000000000) {
+            return `${Math.round(num / 100000000) / 10}b`;
+        }
+        if (num >= 1000000) {
+            return `${Math.round(num / 100000) / 10}m`;
+        }
+        if (num >= 1000) {
+            return `${Math.round(num / 100) / 10}k`;
+        }
+        return num;
+    };
+
     const li = document.createElement("li");
     li.className = "npm-stats";
     li.innerHTML = `
@@ -118,7 +131,7 @@ export function renderStats(packageName: string, stats: Stats) {
                 data-view-component="true"
                 class="Counter js-social-count"
             >
-                ${stats.lastDay.toLocaleString()}
+                ${shortenNumber(stats.lastDay)}
             </span>
     </a>
     <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative">
