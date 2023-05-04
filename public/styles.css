@@ -1,0 +1,29 @@
+ul.pagehead-actions .npm-stats .select-menu-modal dl {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 40px;
+}
+
+ul.pagehead-actions .npm-stats .select-menu-modal dl dt {
+    font-weight: bold;
+}
+
+ul.pagehead-actions .npm-stats a svg {
+    vertical-align: middle;
+}
+
+ul.pagehead-actions .npm-stats .select-menu-modal {
+    width: 450px;
+    left: auto;
+    z-index: 9999;
+    right: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-top: 8px !important;
+}
+
+ul.pagehead-actions .npm-stats details summary span {
+    margin-right: 0.3rem;
+}
