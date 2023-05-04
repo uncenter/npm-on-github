@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "NPM on Github",
     "version": "1.0",
-    "description": "View NPM package downloads for Github repositories",
+    "description": "View NPM package downloads right on Github.",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
