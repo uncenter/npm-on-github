@@ -142,7 +142,7 @@ export function renderStats(packageName: string, stats: Stats) {
       </summary>
       <details-menu class="select-menu-modal position-absolute">
         <div class="select-menu-header">
-          <span class="select-menu-title">Downloads</span>
+          <h5>Downloads</h5>
         </div>
         <dl>
           <dt>Last day</dt>
