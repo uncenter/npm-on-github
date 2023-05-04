@@ -8,6 +8,16 @@ NPM on Github displays NPM package statistics for packages hosted on Github, on 
 
 Coming soon...
 
+## Roadmap
+
+-   [ ] Upload to Chrome Web Store
+-   [ ] Port to Firefox, Edge, Opera, Safari
+-   [ ] Add extension option page
+    -   [ ] Change expiry time
+        -   [ ] Globally
+        -   [ ] Per repository
+    -   [ ] Display number: last day, last week, last month
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
