@@ -15,7 +15,7 @@ export function createCacheKey(owner: string, repo: string) {
 
 export function isCacheFresh(pkg: Cache | null) {
     if (!pkg) return false;
-    return pkg.created > Date.now() - (pkg.expires || 30 * 24 * 60 * 60 * 1000);
+    return pkg.created > Date.now() - (pkg.expires || 7 * 24 * 60 * 60 * 1000);
 }
 
 export function getCache(cacheKey: string) {
