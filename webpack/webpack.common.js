@@ -17,6 +17,7 @@ module.exports = {
                 return chunk.name !== "background";
             },
         },
+        minimize: false,
     },
     module: {
         rules: [

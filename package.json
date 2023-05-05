@@ -6,6 +6,7 @@
     "scripts": {
         "watch": "webpack --config webpack/webpack.dev.js --watch",
         "build": "webpack --config webpack/webpack.prod.js",
+        "zip": "npm run build && zip -r extension.zip dist/*",
         "clean": "rimraf dist",
         "test": "npx jest",
         "style": "prettier --write \"src/**/*.{ts}\""
