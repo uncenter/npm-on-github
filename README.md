@@ -25,9 +25,12 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
 
 ## Roadmap
 
--   [ ] Upload to Chrome Web Store
--   [ ] Port to Firefox, Edge, Opera, Safari
--   [ ] Add extension option page
+-   [ ] Add [permissions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions) to `manifest.json`
+-   [ ] Port to other browsers
+    -   [ ] Firefox
+    -   [ ] Safari
+    -   [ ] Edge
+-   [ ] Add [options_ui](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui)
     -   [ ] Change expiry time
         -   [ ] Globally
         -   [ ] Per repository
