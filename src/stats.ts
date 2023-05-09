@@ -1,4 +1,6 @@
 import { Chart } from "chart.js/auto";
+import { createPackage } from "./package";
+import { ValidCache } from "./cache";
 
 export type Stats = {
     full: NpmDownload;
@@ -81,9 +83,12 @@ export function renderChart(canvasId: string, stats: Stats) {
     );
 }
 
-export function renderStats(packageName: string, stats: Stats) {
+export function renderStats(pkg: ValidCache, refresh = false) {
     const pageheadActions = document.querySelector("ul.pagehead-actions");
-    if (!pageheadActions || pageheadActions.querySelector(".npm-stats")) {
+    if (
+        !pageheadActions ||
+        (pageheadActions.querySelector(".npm-stats") && !refresh)
+    ) {
         return;
     }
 
@@ -93,7 +98,7 @@ export function renderStats(packageName: string, stats: Stats) {
         ) as HTMLCanvasElement;
         if (!chartCanvas) return;
         observer.disconnect();
-        renderChart("npm-stats-chart", stats);
+        renderChart("npm-stats-chart", pkg.stats);
     });
 
     observer.observe(pageheadActions, { childList: true });
@@ -111,11 +116,18 @@ export function renderStats(packageName: string, stats: Stats) {
         return num;
     };
 
-    const li = document.createElement("li");
-    li.className = "npm-stats";
+    let li;
+    if (!document.querySelector(".npm-stats")) {
+        li = document.createElement("li");
+        li.className = "npm-stats";
+    } else {
+        li = document.querySelector(".npm-stats") as HTMLLIElement;
+    }
     li.innerHTML = `
     <div data-view-component="true" class="starred BtnGroup flex-1">
-    <a href="https://www.npmjs.com/package/${packageName}" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
+    <a href="https://www.npmjs.com/package/${
+        pkg.name
+    }" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="13px" viewBox="0 0 18 7">
         <path fill="#CB3837" d="M0,0h18v6H9v1H5V6H0V0z M1,5h2V2h1v3h1V1H1V5z M6,1v5h2V5h2V1H6z M8,2h1v2H8V2z M11,1v4h2V2h1v3h1V2h1v3h1V1H11z"/>
         <polygon fill="#FFFFFF" points="1,5 3,5 3,2 4,2 4,5 5,5 5,1 1,1 "/>
@@ -123,19 +135,23 @@ export function renderStats(packageName: string, stats: Stats) {
         <polygon fill="#FFFFFF" points="11,1 11,5 13,5 13,2 14,2 14,5 15,5 15,2 16,2 16,5 17,5 17,1 "/>
       </svg>
       <span
-        aria-label="${stats.lastDay.toLocaleString()} NPM downloads in the last day"
+        aria-label="${pkg.stats.lastDay.toLocaleString()} NPM downloads in the last day"
                 data-singular-suffix="downloads in the last day"
                 data-plural-suffix="download in the last day"
                 data-turbo-replace="true"
-                title="${stats.lastDay.toLocaleString()}"
+                title="${pkg.stats.lastDay.toLocaleString()}"
                 data-view-component="true"
                 class="Counter js-social-count"
             >
-                ${shortenNumber(stats.lastDay)}
+                ${shortenNumber(pkg.stats.lastDay)}
             </span>
     </a>
-    <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative">
-      <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="View NPM downloads graph for ${packageName}">
+    <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative"${
+        refresh ? " open" : ""
+    }>
+      <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="View NPM downloads graph for ${
+          pkg.name
+      }">
         <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-triangle-down">
     <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
 </svg>
@@ -143,14 +159,17 @@ export function renderStats(packageName: string, stats: Stats) {
       <details-menu class="select-menu-modal position-absolute">
         <div class="select-menu-header">
           <h5>Downloads</h5>
+          <button id="npm-stats-refresh" type="button" class="btn tooltipped tooltipped-w" aria-label="Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"></path></svg>
+            </button>
         </div>
         <dl>
           <dt>Last day</dt>
-          <dd>${stats.lastDay.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastDay.toLocaleString()}</dd>
           <dt>Last week</dt>
-          <dd>${stats.lastWeek.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastWeek.toLocaleString()}</dd>
           <dt>Last month</dt>
-          <dd>${stats.lastMonth.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastMonth.toLocaleString()}</dd>
         </dl>
         <canvas id="npm-stats-chart"></canvas>
       </details-menu>
@@ -158,4 +177,12 @@ export function renderStats(packageName: string, stats: Stats) {
     </div>
   `;
     pageheadActions.appendChild(li);
+    document
+        ?.querySelector("#npm-stats-refresh")
+        ?.addEventListener("click", async () => {
+            renderStats(
+                (await createPackage(pkg.owner, pkg.repo)) as ValidCache,
+                true
+            );
+        });
 }

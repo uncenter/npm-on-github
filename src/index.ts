@@ -1,5 +1,11 @@
 import { getOwnerRepo } from "./repo";
-import { getCache, createCacheKey, isCacheFresh, Cache } from "./cache";
+import {
+    getCache,
+    createCacheKey,
+    isCacheFresh,
+    Cache,
+    ValidCache,
+} from "./cache";
 import { renderStats } from "./stats";
 import { createPackage } from "./package";
 
@@ -15,7 +21,7 @@ const processPage = async () => {
         pkg = cache;
     }
     if (!pkg || !pkg.name || !pkg.stats) return;
-    renderStats(pkg.name, pkg.stats);
+    renderStats(pkg as ValidCache);
 };
 
 const run = () => {

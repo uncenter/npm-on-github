@@ -19,11 +19,36 @@ ul.pagehead-actions .npm-stats .select-menu-modal {
     left: auto;
     z-index: 9999;
     right: 0;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     margin-top: 8px !important;
 }
 
-ul.pagehead-actions .npm-stats chart#npm-stats-chart {
+ul.pagehead-actions .npm-stats canvas#npm-stats-chart {
     margin-block-end: 1em;
+}
+
+ul.pagehead-actions .npm-stats .select-menu-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+ul.pagehead-actions .npm-stats .select-menu-header button#npm-stats-refresh {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+ul.pagehead-actions .npm-stats .select-menu-header #npm-stats-refresh svg {
+    vertical-align: text-bottom;
+    fill: currentColor;
+    height: 1rem;
+    width: 1rem;
+    margin-left: 0.25rem;
 }

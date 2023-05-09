@@ -9,6 +9,11 @@ export type Cache = {
     stats: Stats | undefined;
 };
 
+export type ValidCache = Cache & {
+    name: string;
+    stats: Stats;
+};
+
 export function createCacheKey(owner: string, repo: string) {
     return `npm-on-github.${owner}/${repo}`;
 }
