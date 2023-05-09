@@ -1,32 +1,14 @@
-import { getOwnerRepo } from "./repo";
-import {
-    getCache,
-    createCacheKey,
-    isCacheFresh,
-    Cache,
-    ValidCache,
-} from "./cache";
-import { renderStats } from "./stats";
-import { createPackage } from "./package";
+import { retrievePackage } from "./package";
+import { getOwnerAndRepo } from "./utils";
+import { injectContent } from "./inject";
+import type { Package } from "./package";
 
 const processPage = async () => {
-    const { owner, repo } = getOwnerRepo(location.href) || {};
+    const { owner, repo } = getOwnerAndRepo(location.href) || {};
     if (!owner || !repo) return;
-
-    let cache = getCache(createCacheKey(owner, repo));
-    let pkg: Cache;
-    if (!isCacheFresh(cache) || !cache) {
-        pkg = (await createPackage(owner, repo)) as Cache;
-    } else {
-        pkg = cache;
-    }
-    if (!pkg || !pkg.name || !pkg.stats) return;
-    renderStats(pkg as ValidCache);
-};
-
-const run = () => {
-    processPage();
-    handleNavigation();
+    let pkg = await retrievePackage(owner, repo);
+    if (!pkg) return;
+    injectContent(pkg as Package);
 };
 
 const handleNavigation = () => {
@@ -50,4 +32,5 @@ const handleNavigation = () => {
     observer.observe(pageContainer, { childList: true });
 };
 
-run();
+processPage();
+handleNavigation();

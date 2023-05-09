@@ -1,33 +1,54 @@
-import type { Stats } from "./stats";
+import type { Stats } from "./inject";
 
 export type Cache = {
     owner: string;
     repo: string;
     created: number;
     expires?: number;
-    name: string | undefined;
-    stats: Stats | undefined;
+    data: {
+        name: string | undefined;
+        stats?: Stats;
+        valid: boolean;
+    };
 };
 
-export type ValidCache = Cache & {
-    name: string;
-    stats: Stats;
-};
-
-export function createCacheKey(owner: string, repo: string) {
+export function generateCacheKey(owner: string, repo: string): string {
     return `npm-on-github.${owner}/${repo}`;
 }
 
-export function isCacheFresh(pkg: Cache | null) {
-    if (!pkg) return false;
-    return pkg.created > Date.now() - (pkg.expires || 7 * 24 * 60 * 60 * 1000);
+export function isFresh(cache: Cache): boolean {
+    if (!cache) return false;
+    return (
+        cache.created > Date.now() - (cache.expires || 7 * 24 * 60 * 60 * 1000)
+    );
 }
 
-export function getCache(cacheKey: string) {
-    const pkg = localStorage.getItem(cacheKey);
-    return pkg ? (JSON.parse(pkg) as Cache) : null;
+export function isCache(cache: Cache | null): cache is Cache {
+    if (!cache) return false;
+    return (
+        cache.owner !== undefined &&
+        cache.repo !== undefined &&
+        cache.created !== undefined &&
+        cache.data !== undefined &&
+        cache.data.valid !== undefined
+    );
 }
 
-export function setCache(cacheKey: string, pkg: Cache) {
-    localStorage.setItem(cacheKey, JSON.stringify(pkg));
+export function getCache(cacheKey: string): Cache | null {
+    const cache = localStorage.getItem(cacheKey);
+    if (!cache || !isCache(JSON.parse(cache))) return null;
+    return JSON.parse(cache);
+}
+
+export function setCache(cacheKey: string, cache: Cache) {
+    localStorage.setItem(cacheKey, JSON.stringify(cache));
+}
+
+export function clearCache(cacheKey: string) {
+    localStorage.removeItem(cacheKey);
+}
+
+export function validateCache(cache: Cache | null): cache is Cache {
+    if (!cache) return false;
+    return cache.data.valid && isFresh(cache);
 }
