@@ -1,4 +1,17 @@
 export function getOwnerAndRepo(url: string) {
+    const urlPrefixes: Record<string, (url: string) => string> = {
+        "git+https://": (url) => url.slice(4),
+        "git+ssh://": (url) => `https://${url.slice(10)}`,
+        "git://": (url) => `https://${url.slice(6)}`,
+    };
+    for (const prefix in urlPrefixes) {
+        if (url.startsWith(prefix)) {
+            url = urlPrefixes[prefix](url);
+            if (url.endsWith(".git")) {
+                url = url.slice(0, -4);
+            }
+        }
+    }
     const parsedUrl = new URL(url);
     const [, owner, repo] = parsedUrl.pathname.split("/");
 

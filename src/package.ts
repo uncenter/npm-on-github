@@ -12,81 +12,70 @@ export type Package = Cache & {
     };
 };
 
-export async function resolvePrivatePackage(
-    owner: string,
-    repo: string,
-    packageName: string
-) {
-    // TODO: Refactor entire function
-    const response = await fetch(
-        `https://registry.npmjs.org/${packageName}/latest`
-    );
-
-    if (Math.floor(response.status / 100) === 4) {
-        console.warn(
-            `[npm-on-github] Couldn't find "${packageName}" in npm registry`
-        );
-        return null;
-    }
-
-    const responseBody = await response.json();
-
-    if (responseBody.bugs && responseBody.bugs.url) {
-        const registryInfo = getOwnerAndRepo(responseBody.bugs.url);
-        if (registryInfo?.owner === owner && registryInfo.repo === repo) {
-            return packageName;
-        }
-    }
-
-    return null;
-}
-
-export async function getPackageName(
-    owner: string,
-    repo: string
-): Promise<string | null | false> {
-    const response = await fetch(
+export async function getPackageJsons(owner: string, repo: string) {
+    const githubResponse = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/package.json`
     );
-
-    if (response.status === 403) {
-        // TODO: Handle rate limiting/provide error message
-        return false;
-    } else if (response.status === 404) {
-        // TODO: Provide error message
+    if (githubResponse.status === 403 || githubResponse.status === 404) {
         return null;
-    } else {
-        // TODO: Figure out why `aotb` is needed here, i.e. why the response is base64 encoded
-        const packageJson = JSON.parse(atob((await response.json()).content));
-
-        let packageName = packageJson.name;
-
-        if (packageJson.private) {
-            packageName = await resolvePrivatePackage(owner, repo, packageName);
-        }
-
-        return packageName;
     }
+    const packageJson = JSON.parse(atob((await githubResponse.json()).content));
+    if (!packageJson.name || !packageJson.version) {
+        return null;
+    }
+    const npmResponse = await fetch(
+        `https://registry.npmjs.org/${packageJson.name}/${packageJson.version}`
+    );
+    if (npmResponse.status === 404) {
+        return null;
+    }
+    return {
+        github: packageJson,
+        npm: await npmResponse.json(),
+    };
 }
 
 export async function newPackage(owner: string, repo: string): Promise<Cache> {
+    const nullPkg = {
+        owner,
+        repo,
+        created: Date.now(),
+        data: { name: undefined, valid: false },
+    };
     let pkg: Cache;
-    const packageName = await getPackageName(owner, repo);
-    if (!packageName) {
-        pkg = {
-            owner,
-            repo,
-            created: Date.now(),
-            data: { name: undefined, valid: false },
-        };
+    const response = await getPackageJsons(owner, repo);
+    if (!response) {
+        return nullPkg;
+    }
+    const { github: packageJson, npm: npmPackageJson } = response;
+    let matchingRepo;
+    if (
+        npmPackageJson.repository.url !== undefined &&
+        npmPackageJson.repository.url.includes("github.com")
+    ) {
+        const ownerAndRepo = getOwnerAndRepo(npmPackageJson.repository.url);
+        if (ownerAndRepo) {
+            if (ownerAndRepo.owner === owner && ownerAndRepo.repo === repo) {
+                matchingRepo = true;
+            }
+        } else {
+            matchingRepo = false;
+        }
     } else {
-        const stats = await fetchStats(packageName);
+        matchingRepo = false;
+    }
+    if (
+        packageJson.name === npmPackageJson.name &&
+        packageJson.version === npmPackageJson.version &&
+        (matchingRepo === true || matchingRepo === undefined)
+    ) {
+        const stats = await fetchStats(packageJson.name);
         if (!stats) {
             pkg = {
                 owner,
                 repo,
                 created: Date.now(),
-                data: { name: packageName, valid: false },
+                data: { name: packageJson.name, valid: false },
             };
         } else {
             pkg = {
@@ -94,12 +83,14 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
                 repo,
                 created: Date.now(),
                 data: {
-                    name: packageName,
+                    name: packageJson.name,
                     stats,
                     valid: true,
                 },
             };
         }
+    } else {
+        pkg = nullPkg;
     }
     setCache(generateCacheKey(owner, repo), pkg);
     return pkg;
