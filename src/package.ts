@@ -4,6 +4,8 @@ import { setCache, getCache, generateCacheKey, validateCache } from "./cache";
 import { fetchStats } from "./inject";
 import { getOwnerAndRepo } from "./utils";
 
+import { logger } from "./utils";
+
 export type Package = Cache & {
     data: {
         name: string;
@@ -17,16 +19,27 @@ export async function getPackageJsons(owner: string, repo: string) {
         `https://api.github.com/repos/${owner}/${repo}/contents/package.json`
     );
     if (githubResponse.status === 403 || githubResponse.status === 404) {
+        logger.error(
+            `Failed to fetch package.json for ${owner}/${repo}: ${githubResponse.status}`
+        );
         return null;
     }
     const packageJson = JSON.parse(atob((await githubResponse.json()).content));
     if (!packageJson.name || !packageJson.version) {
+        logger.error(
+            `Failed to parse package.json for ${owner}/${repo}: ${JSON.stringify(
+                packageJson
+            )}`
+        );
         return null;
     }
     const npmResponse = await fetch(
         `https://registry.npmjs.org/${packageJson.name}/${packageJson.version}`
     );
     if (npmResponse.status === 404) {
+        logger.warn(
+            `Failed to fetch package.json for ${owner}/${repo}: ${npmResponse.status}`
+        );
         return null;
     }
     return {
@@ -59,6 +72,9 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
                 matchingRepo = true;
             }
         } else {
+            logger.log(
+                `Detected GitHub repository URL in package.json for ${owner}/${repo} but did not match`
+            );
             matchingRepo = false;
         }
     } else {
@@ -71,6 +87,11 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
     ) {
         const stats = await fetchStats(packageJson.name);
         if (!stats) {
+            logger.error(
+                `Failed to fetch stats for ${owner}/${repo}: ${JSON.stringify(
+                    stats
+                )}`
+            );
             pkg = {
                 owner,
                 repo,
@@ -90,6 +111,11 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
             };
         }
     } else {
+        logger.log(
+            `Failed to match package.json for ${owner}/${repo}: ${JSON.stringify(
+                packageJson
+            )} vs ${JSON.stringify(npmPackageJson)}`
+        );
         pkg = nullPkg;
     }
     setCache(generateCacheKey(owner, repo), pkg);

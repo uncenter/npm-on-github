@@ -33,3 +33,15 @@ export const formatNumber = (num: number | string): string => {
     }
     return `${num}`;
 };
+
+export const logger = {
+    error: (message: string) => {
+        console.error(`[npm-on-github] ${message}`);
+    },
+    warn: (message: string) => {
+        console.warn(`[npm-on-github] ${message}`);
+    },
+    log: (message: string) => {
+        console.log(`[npm-on-github] ${message}`);
+    },
+};
