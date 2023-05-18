@@ -26,8 +26,7 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
 ## Roadmap
 
 -   [ ] Add tests
--   [ ] Properly verify that the npm package is hosted on the current repository
--   [ ] Add [permissions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions) to `manifest.json`
+-   [x] Add [permissions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions) to `manifest.json`
 -   [ ] Port to other browsers
     -   [ ] Firefox
     -   [ ] Safari
