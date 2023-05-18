@@ -68,6 +68,19 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
                     legend: {
                         display: false,
                     },
+                    tooltip: {
+                        backgroundColor: "#28a745",
+                        titleColor: "#fff",
+                        bodyColor: "#fff",
+                        callbacks: {
+                            title: (context: any) =>
+                                context[0].label
+                                    ? context[0].label
+                                    : context[0].parsed.x,
+                            label: (context: any) =>
+                                context.parsed.y.toLocaleString(),
+                        },
+                    },
                 },
                 scales: {
                     y: {
