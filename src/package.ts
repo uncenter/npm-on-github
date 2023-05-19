@@ -14,41 +14,41 @@ export type Package = Cache & {
     };
 };
 
-export async function getPackageJsons(owner: string, repo: string) {
-    const githubResponse = await fetch(
+export async function getPackageData(owner: string, repo: string) {
+    let response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/package.json`
     );
-    if (githubResponse.status === 403 || githubResponse.status === 404) {
+    if (response.status === 403 || response.status === 404) {
         logger.error(
-            `Failed to fetch GitHub package.json for ${owner}/${repo}: ${
-                githubResponse.status
+            `Failed to fetch package.json contents for ${owner}/${repo}: ${
+                response.status
             } (${`https://api.github.com/repos/${owner}/${repo}/contents/package.json`})`
         );
         return null;
     }
-    const packageJson = JSON.parse(atob((await githubResponse.json()).content));
+
+    const packageJson = JSON.parse(atob((await response.json()).content));
     if (!packageJson.name || !packageJson.version) {
         logger.error(
-            `Failed to parse package.json for ${owner}/${repo}: ${JSON.stringify(
-                packageJson
-            )}`
+            `Failed to parse package.json for ${owner}/${repo}: Could not find name or version`
         );
         return null;
     }
-    const npmResponse = await fetch(
-        `https://registry.npmjs.org/${packageJson.name}`
-    );
-    if (npmResponse.status === 404) {
+
+    response = await fetch(`https://registry.npmjs.org/${packageJson.name}`);
+    if (response.status === 404) {
         logger.warn(
-            `Failed to fetch NPM package.json for ${owner}/${repo}: ${
-                npmResponse.status
+            `Failed to fetch NPM data for ${owner}/${repo}: ${
+                response.status
             } (${`https://registry.npmjs.org/${packageJson.name}`})`
         );
         return null;
     }
+    const npmData = await response.json();
+
     return {
-        github: packageJson,
-        npm: await npmResponse.json(),
+        packageJson,
+        npmData,
     };
 }
 
@@ -60,35 +60,26 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
         data: { name: undefined, valid: false },
     };
     let pkg: Cache;
-    const response = await getPackageJsons(owner, repo);
-    if (!response) {
-        return nullPkg;
-    }
-    const { github: packageJson, npm: npmPackageJson } = response;
-    let matchingRepo;
+
+    const response = await getPackageData(owner, repo);
+    if (!response) return nullPkg;
+    const { packageJson, npmData } = response;
+
+    let matchingRepo = false;
     if (
-        npmPackageJson.repository.url !== undefined &&
-        npmPackageJson.repository.url.includes("github.com")
+        npmData.repository.url !== undefined &&
+        npmData.repository.url.includes("github.com")
     ) {
-        const ownerAndRepo = getOwnerAndRepo(npmPackageJson.repository.url);
-        if (ownerAndRepo) {
-            if (ownerAndRepo.owner === owner && ownerAndRepo.repo === repo) {
-                matchingRepo = true;
-            }
-        } else {
-            logger.log(
-                `Detected GitHub repository URL in package.json for ${owner}/${repo} but did not match`
-            );
-            matchingRepo = false;
+        const ownerAndRepo = getOwnerAndRepo(npmData.repository.url);
+        if (ownerAndRepo?.owner === owner && ownerAndRepo?.repo === repo) {
+            matchingRepo = true;
         }
-    } else {
-        matchingRepo = false;
     }
     if (
-        matchingRepo === true ||
-        (matchingRepo === undefined &&
-            packageJson.name === npmPackageJson.name &&
-            packageJson.version === npmPackageJson.version)
+        matchingRepo ||
+        (!matchingRepo &&
+            packageJson.name === npmData.name &&
+            packageJson.version === npmData.version)
     ) {
         const stats = await fetchStats(packageJson.name);
         if (!stats) {
@@ -116,7 +107,12 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
             };
         }
     } else {
-        logger.log(`Failed to match package.json for ${owner}/${repo}`);
+        let message = matchingRepo
+            ? "name and version mismatch"
+            : "package.json repository URL mismatch";
+        logger.log(
+            `Failed to match package.json for ${owner}/${repo}: ${message}`
+        );
         pkg = nullPkg;
     }
     setCache(generateCacheKey(owner, repo), pkg);

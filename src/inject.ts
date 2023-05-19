@@ -98,6 +98,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 }
 
 export function injectContent(pkg: Package, refresh = false) {
+    if (!pkg.data.valid) return;
     const injectionPoint = document.querySelector("ul.pagehead-actions");
     if (
         !injectionPoint ||
