@@ -17,7 +17,7 @@ export function getOwnerAndRepo(url: string) {
 
     if (!owner || !repo) return null;
 
-    return { owner, repo };
+    return { owner: owner.toLowerCase(), repo: repo.toLowerCase() };
 }
 
 export const formatNumber = (num: number | string): string => {

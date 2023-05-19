@@ -20,7 +20,9 @@ export async function getPackageJsons(owner: string, repo: string) {
     );
     if (githubResponse.status === 403 || githubResponse.status === 404) {
         logger.error(
-            `Failed to fetch package.json for ${owner}/${repo}: ${githubResponse.status}`
+            `Failed to fetch GitHub package.json for ${owner}/${repo}: ${
+                githubResponse.status
+            } (${`https://api.github.com/repos/${owner}/${repo}/contents/package.json`})`
         );
         return null;
     }
@@ -34,11 +36,13 @@ export async function getPackageJsons(owner: string, repo: string) {
         return null;
     }
     const npmResponse = await fetch(
-        `https://registry.npmjs.org/${packageJson.name}/${packageJson.version}`
+        `https://registry.npmjs.org/${packageJson.name}`
     );
     if (npmResponse.status === 404) {
         logger.warn(
-            `Failed to fetch package.json for ${owner}/${repo}: ${npmResponse.status}`
+            `Failed to fetch NPM package.json for ${owner}/${repo}: ${
+                npmResponse.status
+            } (${`https://registry.npmjs.org/${packageJson.name}`})`
         );
         return null;
     }
@@ -81,9 +85,10 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
         matchingRepo = false;
     }
     if (
-        packageJson.name === npmPackageJson.name &&
-        packageJson.version === npmPackageJson.version &&
-        (matchingRepo === true || matchingRepo === undefined)
+        matchingRepo === true ||
+        (matchingRepo === undefined &&
+            packageJson.name === npmPackageJson.name &&
+            packageJson.version === npmPackageJson.version)
     ) {
         const stats = await fetchStats(packageJson.name);
         if (!stats) {
@@ -111,11 +116,7 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
             };
         }
     } else {
-        logger.log(
-            `Failed to match package.json for ${owner}/${repo}: ${JSON.stringify(
-                packageJson
-            )} vs ${JSON.stringify(npmPackageJson)}`
-        );
+        logger.log(`Failed to match package.json for ${owner}/${repo}`);
         pkg = nullPkg;
     }
     setCache(generateCacheKey(owner, repo), pkg);
