@@ -20,9 +20,9 @@ export async function getPackageData(owner: string, repo: string) {
     );
     if (response.status === 403 || response.status === 404) {
         logger.error(
-            `Failed to fetch package.json contents for ${owner}/${repo}: ${
+            `Failed to fetch package.json contents for ${owner}/${repo} (${
                 response.status
-            } (${`https://api.github.com/repos/${owner}/${repo}/contents/package.json`})`
+            }): ${JSON.stringify(await response.json())}`
         );
         return null;
     }
@@ -38,9 +38,9 @@ export async function getPackageData(owner: string, repo: string) {
     response = await fetch(`https://registry.npmjs.org/${packageJson.name}`);
     if (response.status === 404) {
         logger.warn(
-            `Failed to fetch NPM data for ${owner}/${repo}: ${
+            `Failed to fetch NPM data for ${owner}/${repo} (${
                 response.status
-            } (${`https://registry.npmjs.org/${packageJson.name}`})`
+            }): ${JSON.stringify(await response.json())}`
         );
         return null;
     }
