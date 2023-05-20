@@ -1,6 +1,6 @@
 import { Chart } from "chart.js/auto";
 import { Package, newPackage } from "./package";
-import { formatNumber } from "./utils";
+import { formatNumber, logger } from "./utils";
 
 export type Stats = {
     full: NpmDownload;
@@ -182,10 +182,16 @@ export function injectContent(pkg: Package, refresh = false) {
     injectionPoint
         ?.querySelector("#npm-stats-refresh")
         ?.addEventListener("click", async () => {
-            chart.destroy();
-            injectContent(
-                (await newPackage(pkg.owner, pkg.repo)) as Package,
-                true
-            );
+            let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
+            if (refreshedPkg?.data?.stats) {
+                chart.data.datasets[0].data =
+                    refreshedPkg.data.stats.full.downloads.map(
+                        (d) => d.downloads
+                    );
+                chart.update();
+                logger.log("Refreshed stats successfully!");
+            } else {
+                logger.error("Failed to refresh stats.");
+            }
         });
 }
