@@ -184,11 +184,8 @@ export function injectContent(pkg: Package, refresh = false) {
         ?.addEventListener("click", async () => {
             let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
             if (refreshedPkg?.data?.stats) {
-                chart.data.datasets[0].data =
-                    refreshedPkg.data.stats.full.downloads.map(
-                        (d) => d.downloads
-                    );
-                chart.update();
+                chart.destroy();
+                injectContent(refreshedPkg as Package, true);
                 logger.log("Refreshed stats successfully!");
             } else {
                 logger.error("Failed to refresh stats.");
