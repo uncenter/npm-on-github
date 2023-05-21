@@ -5,9 +5,13 @@
 
 NPM on Github displays NPM package statistics for packages hosted on Github, on Github!
 
-![Demo](/images/cropped-full.png)
+![Chart](/images/demo.png)
+
+> **You can check out other demo images in the [images](/images) directory.**
 
 ## Installation
+
+### Build from source
 
 ```bash
 git clone https://github.com/uncenter/npm-on-github.git
@@ -15,6 +19,12 @@ cd npm-on-github
 npm install
 npm run build
 ```
+
+### Download from releases
+
+Coming soon!
+
+### Install as a Chrome extension
 
 Then, follow the instructions below for Chrome/Chromium browsers (only browser supported at the moment).
 
