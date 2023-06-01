@@ -16,8 +16,8 @@ NPM on Github displays NPM package statistics for packages hosted on Github, on 
 ```bash
 git clone https://github.com/uncenter/npm-on-github.git
 cd npm-on-github
-npm install
-npm run build
+pnpm install
+pnpm run build
 ```
 
 ### Download from releases
@@ -35,9 +35,7 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
 
 ## Roadmap
 
--   [ ] Add tests
--   [x] Add [permissions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions) to `manifest.json`
--   [ ] Port to other browsers
+-   [ ] Support other browsers
     -   [ ] Firefox
     -   [ ] Safari
     -   [ ] Edge
