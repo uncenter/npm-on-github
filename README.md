@@ -3,7 +3,7 @@
 <h1>NPM on Github</h1>
 </div>
 
-NPM on Github displays NPM package statistics for packages hosted on Github, on Github!
+View NPM package downloads right on Github.
 
 ![Chart](/images/demo.png)
 
@@ -14,8 +14,7 @@ NPM on Github displays NPM package statistics for packages hosted on Github, on 
 ### Build from source
 
 ```bash
-git clone https://github.com/uncenter/npm-on-github.git
-cd npm-on-github
+git clone https://github.com/uncenter/npm-on-github.git && cd npm-on-github
 pnpm install
 pnpm run build
 ```
@@ -35,15 +34,15 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
 
 ## Roadmap
 
--   [ ] Support other browsers
-    -   [ ] Firefox
-    -   [ ] Safari
-    -   [ ] Edge
--   [ ] Add [options_ui](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui)
-    -   [ ] Change expiry time
-        -   [ ] Globally
-        -   [ ] Per repository
-    -   [ ] Display number: last day, last week, last month
+- [ ] Support other browsers
+  - [ ] Firefox
+  - [ ] Safari
+  - [ ] Edge
+- [ ] Add [options_ui](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui)
+  - [ ] Change expiry time
+    - [ ] Globally
+    - [ ] Per repository
+  - [ ] Display number: last day, last week, last month
 
 ## Contributing
 
@@ -54,7 +53,7 @@ Please make sure to update tests as appropriate.
 
 ## Acknowledgment
 
-This project was originally created by [Ahmet Katrancı](https://github.com/katranci), called [github-npm-stats](https://github.com/katranci/github-npm-stats) (check it out!). I loved the idea and wanted to contribute to it, but it appears that the project is no longer maintained, and it was due for a rewrite (I wasn't the greatest fan of the codebase). The original project was licensed under the [MIT](https://choosealicense.com/licenses/mit/) license (as is this project).
+This project was originally created by [Ahmet Katrancı](https://github.com/katranci), called [github-npm-stats](https://github.com/katranci/github-npm-stats) (check it out!). I loved the idea and wanted to contribute to it, but it appears that the project is no longer maintained, and it was due for a rewrite with modern build tools and Typescript. The original project was licensed under the [MIT](https://choosealicense.com/licenses/mit/) license - as is this project.
 
 ## License
 
