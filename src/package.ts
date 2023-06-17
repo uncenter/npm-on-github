@@ -1,18 +1,9 @@
-import type { Cache } from "./cache";
-import type { Stats } from "./inject";
+import type { Cache } from "./types";
 import { setCache, getCache, generateCacheKey, validateCache } from "./cache";
 import { fetchStats } from "./inject";
 import { getOwnerAndRepo } from "./utils";
 
 import { logger } from "./utils";
-
-export type Package = Cache & {
-    data: {
-        name: string;
-        stats: Stats;
-        valid: true;
-    };
-};
 
 export async function getPackageData(owner: string, repo: string) {
     let response = await fetch(

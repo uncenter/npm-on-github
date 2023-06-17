@@ -1,16 +1,4 @@
-import type { Stats } from "./inject";
-
-export type Cache = {
-    owner: string;
-    repo: string;
-    created: number;
-    expires?: number;
-    data: {
-        name: string | undefined;
-        stats?: Stats;
-        valid: boolean;
-    };
-};
+import type { Cache } from "./types";
 
 export function generateCacheKey(owner: string, repo: string): string {
     return `npm-on-github.${owner}/${repo}`;

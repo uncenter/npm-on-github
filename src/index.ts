@@ -1,7 +1,7 @@
 import { retrievePackage } from "./package";
 import { getOwnerAndRepo } from "./utils";
 import { injectContent } from "./inject";
-import type { Package } from "./package";
+import type { Package } from "./types";
 
 const processPage = async () => {
     const { owner, repo } = getOwnerAndRepo(location.href) || {};

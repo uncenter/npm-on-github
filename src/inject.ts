@@ -1,23 +1,7 @@
 import { Chart } from "chart.js/auto";
-import { Package, newPackage } from "./package";
+import { newPackage } from "./package";
+import type { Package, Stats, NpmDownload } from "./types";
 import { formatNumber, logger } from "./utils";
-
-export type Stats = {
-    full: NpmDownload;
-    lastDay: number;
-    lastWeek: number;
-    lastMonth: number;
-};
-
-export type NpmDownload = {
-    start: string;
-    end: string;
-    package: string;
-    downloads: Array<{
-        downloads: number;
-        day: string;
-    }>;
-};
 
 export async function fetchStats(packageName: string): Promise<Stats | null> {
     const response = await fetch(
