@@ -1,35 +1,7 @@
+import type { Package, Stats } from "./types";
 import { Chart } from "chart.js/auto";
 import { newPackage } from "./package";
-import type { Package, Stats, NpmDownload } from "./types";
 import { formatNumber, logger } from "./utils";
-
-export async function fetchStats(packageName: string): Promise<Stats | null> {
-    const response = await fetch(
-        `https://api.npmjs.org/downloads/range/last-month/${packageName}`
-    );
-
-    if (response.status === 404) {
-        return null;
-    }
-
-    const responseBody = (await response.json()) as NpmDownload;
-    const { downloads } = responseBody;
-    const lastDay = downloads[downloads.length - 1].downloads;
-    const lastWeek = downloads
-        .slice(downloads.length - 7, downloads.length)
-        .reduce((sum: number, day: any) => sum + day.downloads, 0);
-    const lastMonth = downloads.reduce(
-        (sum: any, day: any) => sum + day.downloads,
-        0
-    );
-
-    return {
-        full: responseBody,
-        lastDay,
-        lastWeek,
-        lastMonth,
-    };
-}
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
     const chart = new Chart(
@@ -82,7 +54,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 }
 
 export function injectContent(pkg: Package, refresh = false) {
-    if (!pkg.data.valid) return;
+    if (!pkg.stats) return;
     const injectionPoint = document.querySelector("ul.pagehead-actions");
     if (
         !injectionPoint ||
@@ -97,7 +69,7 @@ export function injectContent(pkg: Package, refresh = false) {
         ) as HTMLCanvasElement;
         if (!chartCanvas) return;
         observer.disconnect();
-        chart = renderChart("npm-stats-chart", pkg.data.stats);
+        chart = renderChart("npm-stats-chart", pkg.stats as Stats);
     });
 
     observer.observe(injectionPoint, { childList: true });
@@ -112,7 +84,7 @@ export function injectContent(pkg: Package, refresh = false) {
     li.innerHTML = `
     <div data-view-component="true" class="starred BtnGroup flex-1">
     <a href="https://www.npmjs.com/package/${
-        pkg.data.name
+        pkg.name
     }" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="13px" viewBox="0 0 18 7">
         <path fill="#CB3837" d="M0,0h18v6H9v1H5V6H0V0z M1,5h2V2h1v3h1V1H1V5z M6,1v5h2V5h2V1H6z M8,2h1v2H8V2z M11,1v4h2V2h1v3h1V2h1v3h1V1H11z"/>
@@ -121,22 +93,22 @@ export function injectContent(pkg: Package, refresh = false) {
         <polygon fill="#FFFFFF" points="11,1 11,5 13,5 13,2 14,2 14,5 15,5 15,2 16,2 16,5 17,5 17,1 "/>
       </svg>
       <span
-        aria-label="${pkg.data.stats.lastDay.toLocaleString()} NPM downloads in the last day"
+        aria-label="${pkg.stats.lastDay.toLocaleString()} NPM downloads in the last day"
                 data-singular-suffix="downloads in the last day"
                 data-plural-suffix="download in the last day"
                 data-turbo-replace="true"
-                title="${pkg.data.stats.lastDay.toLocaleString()}"
+                title="${pkg.stats.lastDay.toLocaleString()}"
                 data-view-component="true"
                 class="Counter js-social-count"
             >
-                ${formatNumber(pkg.data.stats.lastDay)}
+                ${formatNumber(pkg.stats.lastDay)}
             </span>
     </a>
     <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative"${
         refresh ? " open" : ""
     }>
       <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="View NPM downloads graph for ${
-          pkg.data.name
+          pkg.name
       }">
         <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-triangle-down">
     <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
@@ -151,11 +123,11 @@ export function injectContent(pkg: Package, refresh = false) {
         </div>
         <dl>
           <dt>Last day</dt>
-          <dd>${pkg.data.stats.lastDay.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastDay.toLocaleString()}</dd>
           <dt>Last week</dt>
-          <dd>${pkg.data.stats.lastWeek.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastWeek.toLocaleString()}</dd>
           <dt>Last month</dt>
-          <dd>${pkg.data.stats.lastMonth.toLocaleString()}</dd>
+          <dd>${pkg.stats.lastMonth.toLocaleString()}</dd>
         </dl>
         <canvas id="npm-stats-chart"></canvas>
       </details-menu>
@@ -167,7 +139,7 @@ export function injectContent(pkg: Package, refresh = false) {
         ?.querySelector("#npm-stats-refresh")
         ?.addEventListener("click", async () => {
             let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
-            if (refreshedPkg?.data?.stats) {
+            if (refreshedPkg?.stats) {
                 chart.destroy();
                 injectContent(refreshedPkg as Package, true);
                 logger.log("Refreshed stats successfully!");

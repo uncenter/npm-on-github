@@ -1,12 +1,10 @@
-import type { Cache } from "./types";
-import { setCache, getCache, generateCacheKey, validateCache } from "./cache";
-import { fetchStats } from "./inject";
+import type { NpmResponse, Package, Stats } from "./types";
+import { generateCacheKey, getCache, isFresh, setCache } from "./cache";
 import { getOwnerAndRepo } from "./utils";
-
 import { logger } from "./utils";
 
-export async function getPackageData(owner: string, repo: string) {
-    let response = await fetch(
+async function fetchPackageJson(owner: string, repo: string) {
+    const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/package.json`
     );
     if (response.status === 403 || response.status === 404) {
@@ -15,7 +13,7 @@ export async function getPackageData(owner: string, repo: string) {
                 response.status
             }): ${JSON.stringify(await response.json())}`
         );
-        return null;
+        return;
     }
 
     const packageJson = JSON.parse(atob((await response.json()).content));
@@ -23,38 +21,68 @@ export async function getPackageData(owner: string, repo: string) {
         logger.error(
             `Failed to parse package.json for ${owner}/${repo}: Could not find name or version`
         );
-        return null;
+        return;
     }
 
-    response = await fetch(`https://registry.npmjs.org/${packageJson.name}`);
+    return packageJson;
+}
+
+async function fetchNpmData(packageName: string) {
+    const response = await fetch(`https://registry.npmjs.org/${packageName}`);
     if (response.status === 404) {
         logger.warn(
-            `Failed to fetch NPM data for ${owner}/${repo} (${
+            `Failed to fetch NPM data for ${packageName} (${
                 response.status
             }): ${JSON.stringify(await response.json())}`
         );
-        return null;
+        return;
     }
-    const npmData = await response.json();
+
+    return await response.json();
+}
+
+export async function fetchStats(packageName: string): Promise<Stats | null> {
+    const response = await fetch(
+        `https://api.npmjs.org/downloads/range/last-month/${packageName}`
+    );
+
+    if (response.status === 404) return null;
+
+    const responseBody = (await response.json()) as NpmResponse;
+    const { downloads } = responseBody;
+    const lastDay = downloads[downloads.length - 1].downloads;
+    const lastWeek = downloads
+        .slice(downloads.length - 7, downloads.length)
+        .reduce((sum: number, day: any) => sum + day.downloads, 0);
+    const lastMonth = downloads.reduce(
+        (sum: any, day: any) => sum + day.downloads,
+        0
+    );
 
     return {
-        packageJson,
-        npmData,
+        full: responseBody,
+        lastDay,
+        lastWeek,
+        lastMonth,
     };
 }
 
-export async function newPackage(owner: string, repo: string): Promise<Cache> {
-    const nullPkg = {
+export async function newPackage(
+    owner: string,
+    repo: string
+): Promise<Package> {
+    const nullPkg: Package = {
         owner,
         repo,
-        created: Date.now(),
-        data: { name: undefined, valid: false },
+        name: undefined,
+        lastChecked: Date.now(),
     };
-    let pkg: Cache;
+    let pkg: Package;
 
-    const response = await getPackageData(owner, repo);
-    if (!response) return nullPkg;
-    const { packageJson, npmData } = response;
+    const packageJson = await fetchPackageJson(owner, repo);
+    if (!packageJson) return nullPkg;
+    const npmData = await fetchNpmData(packageJson.name);
+    if (!npmData) return nullPkg;
 
     let matchingRepo = false;
     if (
@@ -82,27 +110,25 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
             pkg = {
                 owner,
                 repo,
-                created: Date.now(),
-                data: { name: packageJson.name, valid: false },
+                name: packageJson.name,
+                lastChecked: Date.now(),
             };
         } else {
             pkg = {
                 owner,
                 repo,
-                created: Date.now(),
-                data: {
-                    name: packageJson.name,
-                    stats,
-                    valid: true,
-                },
+                name: packageJson.name,
+                lastChecked: Date.now(),
+                stats,
             };
         }
     } else {
-        let message = matchingRepo
-            ? "name and version mismatch"
-            : "package.json repository URL mismatch";
         logger.log(
-            `Failed to match package.json for ${owner}/${repo}: ${message}`
+            `Failed to match package.json for ${owner}/${repo}: ${
+                matchingRepo
+                    ? "name and version mismatch"
+                    : "package.json repository URL mismatch"
+            }`
         );
         pkg = nullPkg;
     }
@@ -113,10 +139,9 @@ export async function newPackage(owner: string, repo: string): Promise<Cache> {
 export async function retrievePackage(
     owner: string,
     repo: string
-): Promise<Cache> {
-    const cacheKey = generateCacheKey(owner, repo);
-    let cache = getCache(cacheKey);
-    if (!validateCache(cache)) {
+): Promise<Package> {
+    let cache = getCache(generateCacheKey(owner, repo));
+    if (!cache || !isFresh(cache) || !cache.stats) {
         cache = await newPackage(owner, repo);
     }
     return cache;

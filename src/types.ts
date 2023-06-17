@@ -1,19 +1,12 @@
-export type Package = Cache & {
-    data: {
-        name: string;
-        stats: Stats;
-        valid: true;
-    };
+export type Package = {
+    owner: string;
+    repo: string;
+    name: string | undefined;
+    lastChecked: number;
+    stats?: Stats;
 };
 
-export type Stats = {
-    full: NpmDownload;
-    lastDay: number;
-    lastWeek: number;
-    lastMonth: number;
-};
-
-export type NpmDownload = {
+export type NpmResponse = {
     start: string;
     end: string;
     package: string;
@@ -23,14 +16,9 @@ export type NpmDownload = {
     }>;
 };
 
-export type Cache = {
-    owner: string;
-    repo: string;
-    created: number;
-    expires?: number;
-    data: {
-        name: string | undefined;
-        stats?: Stats;
-        valid: boolean;
-    };
+export type Stats = {
+    full: NpmResponse;
+    lastDay: number;
+    lastWeek: number;
+    lastMonth: number;
 };

@@ -1,13 +1,13 @@
+import type { Package } from "./types";
+import { injectContent } from "./inject";
 import { retrievePackage } from "./package";
 import { getOwnerAndRepo } from "./utils";
-import { injectContent } from "./inject";
-import type { Package } from "./types";
 
 const processPage = async () => {
     const { owner, repo } = getOwnerAndRepo(location.href) || {};
     if (!owner || !repo) return;
     let pkg = await retrievePackage(owner, repo);
-    if (!pkg || !pkg.data.valid) return;
+    if (!pkg || !pkg.stats) return;
     injectContent(pkg as Package);
 };
 
