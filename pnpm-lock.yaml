@@ -16,9 +16,6 @@ devDependencies:
   copy-webpack-plugin:
     specifier: ^11.0.0
     version: 11.0.0(webpack@5.87.0)
-  glob:
-    specifier: ^10.2.7
-    version: 10.2.7
   jest:
     specifier: ^29.5.0
     version: 29.5.0
