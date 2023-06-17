@@ -139,9 +139,9 @@ export function injectContent(pkg: Package, refresh = false) {
 			if (refreshedPkg?.stats) {
 				chart.destroy();
 				injectContent(refreshedPkg as Package, true);
-				logger.log('Refreshed stats successfully!');
+				logger.success('Refreshed stats successfully!');
 			} else {
-				logger.error('Failed to refresh stats.');
+				logger.warn('Failed to refresh stats.');
 			}
 		});
 }

@@ -8,7 +8,7 @@ async function fetchPackageJson(owner: string, repo: string) {
 		`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
 	);
 	if (response.status === 403 || response.status === 404) {
-		logger.error(
+		logger.warn(
 			`Failed to fetch package.json contents for ${owner}/${repo} (${
 				response.status
 			}): ${JSON.stringify(await response.json())}`,
@@ -18,7 +18,7 @@ async function fetchPackageJson(owner: string, repo: string) {
 
 	const packageJson = JSON.parse(atob((await response.json()).content));
 	if (!packageJson.name || !packageJson.version) {
-		logger.error(
+		logger.warn(
 			`Failed to parse package.json for ${owner}/${repo}: Could not find name or version`,
 		);
 		return;
@@ -102,7 +102,7 @@ export async function newPackage(
 	) {
 		const stats = await fetchStats(packageJson.name);
 		if (!stats) {
-			logger.error(
+			logger.warn(
 				`Failed to fetch stats for ${owner}/${repo}: ${JSON.stringify(stats)}`,
 			);
 			pkg = {
@@ -121,7 +121,7 @@ export async function newPackage(
 			};
 		}
 	} else {
-		logger.log(
+		logger.warn(
 			`Failed to match package.json for ${owner}/${repo}: ${
 				matchingRepo
 					? 'name and version mismatch'
