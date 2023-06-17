@@ -1,91 +1,88 @@
-import type { Package, Stats } from "./types";
-import { Chart } from "chart.js/auto";
-import { newPackage } from "./package";
-import { formatNumber, logger } from "./utils";
+import type { Package, Stats } from './types';
+import { Chart } from 'chart.js/auto';
+import { newPackage } from './package';
+import { formatNumber, logger } from './utils';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
-    const chart = new Chart(
-        document.getElementById(canvasId) as HTMLCanvasElement,
-        {
-            type: "line",
-            data: {
-                labels: stats.full.downloads.map((d) => d.day),
-                datasets: [
-                    {
-                        label: "Downloads",
-                        data: stats.full.downloads.map((d) => d.downloads),
-                        borderWidth: 1,
-                        borderColor: "#28a745",
-                    },
-                ],
-            },
-            options: {
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        backgroundColor: "#28a745",
-                        titleColor: "#fff",
-                        bodyColor: "#fff",
-                        callbacks: {
-                            title: (context: any) =>
-                                context[0].label
-                                    ? context[0].label
-                                    : context[0].parsed.x,
-                            label: (context: any) =>
-                                context.parsed.y.toLocaleString(),
-                        },
-                    },
-                },
-                scales: {
-                    y: {
-                        ticks: {
-                            callback(value: any, index: any, values: any) {
-                                return value.toLocaleString();
-                            },
-                        },
-                    },
-                },
-            },
-        }
-    );
-    return chart;
+	const chart = new Chart(
+		document.getElementById(canvasId) as HTMLCanvasElement,
+		{
+			type: 'line',
+			data: {
+				labels: stats.full.downloads.map((d) => d.day),
+				datasets: [
+					{
+						label: 'Downloads',
+						data: stats.full.downloads.map((d) => d.downloads),
+						borderWidth: 1,
+						borderColor: '#28a745',
+					},
+				],
+			},
+			options: {
+				plugins: {
+					legend: {
+						display: false,
+					},
+					tooltip: {
+						backgroundColor: '#28a745',
+						titleColor: '#fff',
+						bodyColor: '#fff',
+						callbacks: {
+							title: (context: any) =>
+								context[0].label ? context[0].label : context[0].parsed.x,
+							label: (context: any) => context.parsed.y.toLocaleString(),
+						},
+					},
+				},
+				scales: {
+					y: {
+						ticks: {
+							callback(value: any, index: any, values: any) {
+								return value.toLocaleString();
+							},
+						},
+					},
+				},
+			},
+		},
+	);
+	return chart;
 }
 
 export function injectContent(pkg: Package, refresh = false) {
-    if (!pkg.stats) return;
-    const injectionPoint = document.querySelector("ul.pagehead-actions");
-    if (
-        !injectionPoint ||
-        (injectionPoint.querySelector(".npm-stats") && !refresh)
-    )
-        return;
+	if (!pkg.stats) return;
+	const injectionPoint = document.querySelector('ul.pagehead-actions');
+	if (
+		!injectionPoint ||
+		(injectionPoint.querySelector('.npm-stats') && !refresh)
+	)
+		return;
 
-    let chart: Chart;
-    const observer = new MutationObserver((mutations) => {
-        const chartCanvas = document.getElementById(
-            "npm-stats-chart"
-        ) as HTMLCanvasElement;
-        if (!chartCanvas) return;
-        observer.disconnect();
-        chart = renderChart("npm-stats-chart", pkg.stats as Stats);
-    });
+	let chart: Chart;
+	const observer = new MutationObserver((mutations) => {
+		const chartCanvas = document.getElementById(
+			'npm-stats-chart',
+		) as HTMLCanvasElement;
+		if (!chartCanvas) return;
+		observer.disconnect();
+		chart = renderChart('npm-stats-chart', pkg.stats as Stats);
+	});
 
-    observer.observe(injectionPoint, { childList: true });
+	observer.observe(injectionPoint, { childList: true });
 
-    let li;
-    if (!document.querySelector(".npm-stats")) {
-        li = document.createElement("li");
-        li.className = "npm-stats";
-    } else {
-        li = document.querySelector(".npm-stats") as HTMLLIElement;
-    }
-    li.innerHTML = `
+	let li;
+	if (!document.querySelector('.npm-stats')) {
+		li = document.createElement('li');
+		li.className = 'npm-stats';
+	} else {
+		li = document.querySelector('.npm-stats') as HTMLLIElement;
+	}
+	li.innerHTML = `
     <div data-view-component="true" class="starred BtnGroup flex-1">
     <a href="https://www.npmjs.com/package/${
-        pkg.name
-    }" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
+			pkg.name
+		}" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="13px" viewBox="0 0 18 7">
         <path fill="#CB3837" d="M0,0h18v6H9v1H5V6H0V0z M1,5h2V2h1v3h1V1H1V5z M6,1v5h2V5h2V1H6z M8,2h1v2H8V2z M11,1v4h2V2h1v3h1V2h1v3h1V1H11z"/>
         <polygon fill="#FFFFFF" points="1,5 3,5 3,2 4,2 4,5 5,5 5,1 1,1 "/>
@@ -105,11 +102,11 @@ export function injectContent(pkg: Package, refresh = false) {
             </span>
     </a>
     <details class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative"${
-        refresh ? " open" : ""
-    }>
+			refresh ? ' open' : ''
+		}>
       <summary class="btn-sm btn BtnGroup-item px-2 float-none" aria-haspopup="menu" role="button" aria-label="View NPM downloads graph for ${
-          pkg.name
-      }">
+				pkg.name
+			}">
         <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-triangle-down">
     <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
 </svg>
@@ -134,17 +131,17 @@ export function injectContent(pkg: Package, refresh = false) {
     </details>
     </div>
   `;
-    injectionPoint.appendChild(li);
-    injectionPoint
-        ?.querySelector("#npm-stats-refresh")
-        ?.addEventListener("click", async () => {
-            let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
-            if (refreshedPkg?.stats) {
-                chart.destroy();
-                injectContent(refreshedPkg as Package, true);
-                logger.log("Refreshed stats successfully!");
-            } else {
-                logger.error("Failed to refresh stats.");
-            }
-        });
+	injectionPoint.appendChild(li);
+	injectionPoint
+		?.querySelector('#npm-stats-refresh')
+		?.addEventListener('click', async () => {
+			let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
+			if (refreshedPkg?.stats) {
+				chart.destroy();
+				injectContent(refreshedPkg as Package, true);
+				logger.log('Refreshed stats successfully!');
+			} else {
+				logger.error('Failed to refresh stats.');
+			}
+		});
 }

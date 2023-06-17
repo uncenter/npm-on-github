@@ -1,24 +1,24 @@
 export type Package = {
-    owner: string;
-    repo: string;
-    name: string | undefined;
-    lastChecked: number;
-    stats?: Stats;
+	owner: string;
+	repo: string;
+	name: string | undefined;
+	lastChecked: number;
+	stats?: Stats;
 };
 
 export type NpmResponse = {
-    start: string;
-    end: string;
-    package: string;
-    downloads: Array<{
-        downloads: number;
-        day: string;
-    }>;
+	start: string;
+	end: string;
+	package: string;
+	downloads: Array<{
+		downloads: number;
+		day: string;
+	}>;
 };
 
 export type Stats = {
-    full: NpmResponse;
-    lastDay: number;
-    lastWeek: number;
-    lastMonth: number;
+	full: NpmResponse;
+	lastDay: number;
+	lastWeek: number;
+	lastMonth: number;
 };

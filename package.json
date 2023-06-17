@@ -9,7 +9,7 @@
         "zip": "npm run build && zip -r extension.zip dist/*",
         "clean": "rimraf dist",
         "test": "npx jest",
-        "style": "prettier --write \"src/**/*.{ts}\""
+        "style": "prettier --write \"src/**/*.ts\""
     },
     "license": "MIT",
     "packageManager": "pnpm@8.5.1",
