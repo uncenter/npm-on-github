@@ -1,4 +1,4 @@
-ul.pagehead-actions .npm-stats .select-menu-modal dl {
+.npm-stats .select-menu-modal dl {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
@@ -6,15 +6,15 @@ ul.pagehead-actions .npm-stats .select-menu-modal dl {
 	height: 40px;
 }
 
-ul.pagehead-actions .npm-stats .select-menu-modal dl dt {
+.npm-stats .select-menu-modal dl dt {
 	font-weight: bold;
 }
 
-ul.pagehead-actions .npm-stats a svg {
+.npm-stats a svg {
 	vertical-align: middle;
 }
 
-ul.pagehead-actions .npm-stats .select-menu-modal {
+.npm-stats .select-menu-modal {
 	width: 450px;
 	left: auto;
 	z-index: 9999;
@@ -22,38 +22,12 @@ ul.pagehead-actions .npm-stats .select-menu-modal {
 	margin-top: 8px !important;
 	animation: SelectMenu-modal-animation 0.12s cubic-bezier(0, 0.1, 0.1, 1)
 		backwards;
-	animation-name: SelectMenu-modal-animation--sm;
 }
 
-ul.pagehead-actions .npm-stats .select-menu-header {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	padding: 7px 7px 7px 16px;
-}
-
-ul.pagehead-actions .npm-stats .select-menu-content {
+.npm-stats .select-menu-content {
 	padding: 0 1rem 1rem 1rem;
 }
 
-ul.pagehead-actions .npm-stats .select-menu-header button#npm-stats-refresh {
-	background: transparent;
-	border: none;
-	padding: 0;
-	margin: 0;
-	cursor: pointer;
+.npm-stats #npm-stats-refresh:disabled {
 	outline: none;
-}
-
-ul.pagehead-actions
-	.npm-stats
-	.select-menu-header
-	button#npm-stats-refresh
-	svg {
-	vertical-align: text-bottom;
-	fill: currentColor;
-	height: 1rem;
-	width: 1rem;
-	margin-left: 0.25rem;
 }
