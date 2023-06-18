@@ -139,7 +139,15 @@ export async function retrievePackage(
 	repo: string,
 ): Promise<Package> {
 	let cache = getCache(generateCacheKey(owner, repo));
-	if (!cache || !isFresh(cache) || !cache.stats) {
+	// Get a new package if the cache doesn't exist, is stale, or has no name or stats and was last checked more than 12 hours ago
+	if (
+		!cache ||
+		!isFresh(cache) ||
+		(cache.name && !cache.stats) ||
+		(!cache.stats &&
+			!cache.name &&
+			cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000)
+	) {
 		cache = await newPackage(owner, repo);
 	}
 	return cache;
