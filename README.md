@@ -1,6 +1,6 @@
 <div align="center">
-<img src="images/logo.png" width="50">
-<h1>NPM on Github</h1>
+    <img src="images/logo.png" width="50">
+    <h1>NPM on Github</h1>
 </div>
 
 View NPM package downloads right on Github.
