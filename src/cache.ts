@@ -1,12 +1,14 @@
-import type { Package } from './types';
+import type { Options, Package } from './types';
 
 export function generateCacheKey(owner: string, repo: string): string {
 	return `npm-on-github.${owner}/${repo}`;
 }
 
-export function isFresh(cache: Package): boolean {
+export function isFresh(cache: Package, opts: Options): boolean {
 	if (!cache) return false;
-	return cache.lastChecked > Date.now() - 7 * 24 * 60 * 60 * 1000;
+	return (
+		cache.lastChecked > Date.now() - opts.cacheDuration * 24 * 60 * 60 * 1000
+	);
 }
 
 export function isPackage(cache: Package | null): cache is Package {

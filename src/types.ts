@@ -22,3 +22,8 @@ export type Stats = {
 	lastWeek: number;
 	lastMonth: number;
 };
+
+export type Options = {
+	displayPeriod: 'lastDay' | 'lastWeek' | 'lastMonth';
+	cacheDuration: number;
+};

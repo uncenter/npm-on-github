@@ -1,4 +1,4 @@
-import type { Package, Stats } from './types';
+import type { Options, Package, Stats } from './types';
 import { Chart } from 'chart.js/auto';
 import { newPackage } from './package';
 import { formatNumber, logger } from './utils';
@@ -50,7 +50,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 	return chart;
 }
 
-export function injectContent(pkg: Package, refresh = false) {
+export function injectContent(pkg: Package, opts: Options, refresh = false) {
 	if (!pkg.stats) return;
 	const injectionPoint = document.querySelector('ul.pagehead-actions');
 	if (
@@ -78,6 +78,7 @@ export function injectContent(pkg: Package, refresh = false) {
 	} else {
 		li = document.querySelector('.npm-stats') as HTMLLIElement;
 	}
+
 	// prettier-ignore
 	li.innerHTML = `
     <div data-view-component="true" class="d-flex">
@@ -89,15 +90,15 @@ export function injectContent(pkg: Package, refresh = false) {
                 <polygon fill="#FFFFFF" points="11,1 11,5 13,5 13,2 14,2 14,5 15,5 15,2 16,2 16,5 17,5 17,1 "/>
             </svg>
             <span
-                aria-label="${pkg.stats.lastDay.toLocaleString()} NPM downloads in the last day"
-                        data-singular-suffix="downloads in the last day"
-                        data-plural-suffix="download in the last day"
-                        data-turbo-replace="true"
-                        title="${pkg.stats.lastDay.toLocaleString()}"
-                        data-view-component="true"
-                        class="Counter js-social-count"
-                    >
-                        ${formatNumber(pkg.stats.lastDay)}
+                aria-label="${pkg.stats[opts.displayPeriod].toLocaleString()} NPM downloads in the last day"
+                data-singular-suffix="downloads in the last day"
+                data-plural-suffix="download in the last day"
+                data-turbo-replace="true"
+                title="${pkg.stats[opts.displayPeriod].toLocaleString()}"
+                data-view-component="true"
+                class="Counter js-social-count"
+                >
+                ${formatNumber(pkg.stats[opts.displayPeriod])}
             </span>
         </a>
         <details id="npm-stats-details" class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative"${refresh ? ' open' : ''}>
@@ -139,7 +140,7 @@ export function injectContent(pkg: Package, refresh = false) {
 			let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
 			if (refreshedPkg?.stats) {
 				chart.destroy();
-				injectContent(refreshedPkg as Package, true);
+				injectContent(refreshedPkg as Package, opts, true);
 				logger.success('Refreshed stats successfully!');
 			} else {
 				logger.warn('Failed to refresh stats.');

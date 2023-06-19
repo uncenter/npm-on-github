@@ -1,4 +1,4 @@
-import type { NpmResponse, Package, Stats } from './types';
+import type { NpmResponse, Options, Package, Stats } from './types';
 import { generateCacheKey, getCache, isFresh, setCache } from './cache';
 import { getOwnerAndRepo } from './utils';
 import { logger } from './utils';
@@ -137,12 +137,13 @@ export async function newPackage(
 export async function retrievePackage(
 	owner: string,
 	repo: string,
+	opts: Options,
 ): Promise<Package> {
 	let cache = getCache(generateCacheKey(owner, repo));
 	// Get a new package if the cache doesn't exist, is stale, or has no name or stats and was last checked more than 12 hours ago
 	if (
 		!cache ||
-		!isFresh(cache) ||
+		!isFresh(cache, opts) ||
 		(cache.name && !cache.stats) ||
 		(!cache.stats &&
 			!cache.name &&
