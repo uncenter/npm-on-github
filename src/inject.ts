@@ -135,7 +135,7 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
     </div>`;
 	injectionPoint.appendChild(li);
 	injectionPoint
-		?.querySelector('#npm-stats-refresh')
+		.querySelector('#npm-stats-refresh')
 		?.addEventListener('click', async () => {
 			let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
 			if (refreshedPkg?.stats) {
@@ -147,10 +147,10 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 			}
 		});
 	injectionPoint
-		?.querySelector('#npm-stats-close')
+		.querySelector('#npm-stats-close')
 		?.addEventListener('click', () => {
 			injectionPoint
-				?.querySelector('#npm-stats-details')
+				.querySelector('#npm-stats-details')
 				?.removeAttribute('open');
 		});
 }

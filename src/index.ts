@@ -13,7 +13,6 @@ const processPage = async (opts: Options) => {
 
 const handleNavigation = (opts: Options) => {
 	const pageContainer = document.getElementById('js-repo-pjax-container');
-
 	if (!pageContainer) return;
 
 	const observer = new MutationObserver((mutations) => {
@@ -34,7 +33,6 @@ chrome.storage.sync.get(
 	['display-period', 'cache-duration'],
 	({ 'display-period': displayPeriod, 'cache-duration': cacheDuration }) => {
 		const opts = { displayPeriod, cacheDuration };
-		console.log(opts);
 		processPage(opts);
 		handleNavigation(opts);
 	},
