@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="images/logo.png" width="50">
+    <img src="images/logo.png" width="75">
     <h1>NPM on Github</h1>
 </div>
 
@@ -41,6 +41,7 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
 - [ ] Publish to Chrome Web Store
 - [ ] Enable/disable extension from the popup
 - [ ] Reduce `vendor.js` bundle size by only importing the necessary parts of `chart.js`
+- [ ] Fix MutationObserver not processing page after switching repositories
 
 ## Contributing
 
