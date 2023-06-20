@@ -4,67 +4,78 @@ import { getOwnerAndRepo } from './utils';
 import { logger } from './utils';
 
 async function fetchPackageJson(owner: string, repo: string) {
-	const response = await fetch(
-		`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
-	);
-	if (response.status === 403 || response.status === 404) {
-		logger.warn(
-			`Failed to fetch package.json contents for ${owner}/${repo} (${
-				response.status
-			}): ${JSON.stringify(await response.json())}`,
+	try {
+		const response = await fetch(
+			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
 		);
+		if (response.status === 403 || response.status === 404) {
+			logger.warn(
+				`Failed to fetch package.json contents for ${owner}/${repo} (${
+					response.status
+				}): ${JSON.stringify(await response.json())}`,
+			);
+			return;
+		}
+
+		const packageJson = JSON.parse(atob((await response.json()).content));
+		if (!packageJson.name || !packageJson.version) {
+			logger.warn(
+				`Failed to parse package.json for ${owner}/${repo}: Could not find name or version`,
+			);
+			return;
+		}
+
+		return packageJson;
+	} catch (e) {
 		return;
 	}
-
-	const packageJson = JSON.parse(atob((await response.json()).content));
-	if (!packageJson.name || !packageJson.version) {
-		logger.warn(
-			`Failed to parse package.json for ${owner}/${repo}: Could not find name or version`,
-		);
-		return;
-	}
-
-	return packageJson;
 }
 
 async function fetchNpmData(packageName: string) {
-	const response = await fetch(`https://registry.npmjs.org/${packageName}`);
-	if (response.status === 404) {
-		logger.warn(
-			`Failed to fetch NPM data for ${packageName} (${
-				response.status
-			}): ${JSON.stringify(await response.json())}`,
-		);
+	try {
+		const response = await fetch(`https://registry.npmjs.org/${packageName}`);
+		if (response.status === 404) {
+			logger.warn(
+				`Failed to fetch NPM data for ${packageName} (${
+					response.status
+				}): ${JSON.stringify(await response.json())}`,
+			);
+			return;
+		}
+
+		return await response.json();
+	} catch (e) {
 		return;
 	}
-
-	return await response.json();
 }
 
 export async function fetchStats(packageName: string): Promise<Stats | null> {
-	const response = await fetch(
-		`https://api.npmjs.org/downloads/range/last-month/${packageName}`,
-	);
+	try {
+		const response = await fetch(
+			`https://api.npmjs.org/downloads/range/last-month/${packageName}`,
+		);
 
-	if (response.status === 404) return null;
+		if (response.status === 404) return null;
+		const responseBody = (await response.json()) as NpmResponse;
+		const { downloads } = responseBody;
+		const lastDay = downloads[downloads.length - 1].downloads;
+		const lastWeek = downloads
+			.slice(downloads.length - 7, downloads.length)
+			.reduce((sum: number, day: any) => sum + day.downloads, 0);
+		const lastMonth = downloads.reduce(
+			(sum: any, day: any) => sum + day.downloads,
+			0,
+		);
 
-	const responseBody = (await response.json()) as NpmResponse;
-	const { downloads } = responseBody;
-	const lastDay = downloads[downloads.length - 1].downloads;
-	const lastWeek = downloads
-		.slice(downloads.length - 7, downloads.length)
-		.reduce((sum: number, day: any) => sum + day.downloads, 0);
-	const lastMonth = downloads.reduce(
-		(sum: any, day: any) => sum + day.downloads,
-		0,
-	);
-
-	return {
-		full: responseBody,
-		lastDay,
-		lastWeek,
-		lastMonth,
-	};
+		return {
+			full: responseBody,
+			lastDay,
+			lastWeek,
+			lastMonth,
+		};
+	} catch (e) {
+		return null;
+	}
 }
 
 export async function newPackage(
