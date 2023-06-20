@@ -1,7 +1,7 @@
 export type Package = {
 	owner: string;
 	repo: string;
-	name: string | undefined;
+	name?: string;
 	lastChecked: number;
 	stats?: Stats;
 };

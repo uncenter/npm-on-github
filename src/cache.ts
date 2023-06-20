@@ -23,7 +23,7 @@ export function isPackage(cache: Package | null): cache is Package {
 
 export function getCache(cacheKey: string): Package | null {
 	const cache = localStorage.getItem(cacheKey);
-	if (!cache || !isPackage(JSON.parse(cache))) return null;
+	if (!cache) return null;
 	return JSON.parse(cache);
 }
 
