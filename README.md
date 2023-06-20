@@ -38,11 +38,9 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
   - [ ] Firefox
   - [ ] Safari
   - [ ] Edge
-- [ ] Add [options_ui](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui)
-  - [ ] Change expiry time
-    - [ ] Globally
-    - [ ] Per repository
-  - [ ] Display number: last day, last week, last month
+- [ ] Publish to Chrome Web Store
+- [ ] Enable/disable extension from the popup
+- [ ] Reduce `vendor.js` bundle size by only importing the necessary parts of `chart.js`
 
 ## Contributing
 
