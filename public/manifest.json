@@ -16,8 +16,8 @@
 			"css": ["styles.css"]
 		}
 	],
-	"options_ui": {
-		"page": "options.html",
-		"open_in_tab": false
+	"action": {
+		"default_title": "NPM on Github",
+		"default_popup": "popup.html"
 	}
 }
