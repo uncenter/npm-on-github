@@ -1,7 +1,26 @@
 import type { Options, Package, Stats } from './types';
-import { Chart } from 'chart.js/auto';
+import {
+	Chart,
+	LineController,
+	LineElement,
+	PointElement,
+	CategoryScale,
+	LinearScale,
+	Tooltip,
+	Legend,
+} from 'chart.js';
 import { newPackage } from './package';
 import { formatNumber, logger } from './utils';
+
+Chart.register(
+	LineController,
+	LineElement,
+	PointElement,
+	CategoryScale,
+	LinearScale,
+	Tooltip,
+	Legend,
+);
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
 	const chart = new Chart(
