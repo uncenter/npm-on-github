@@ -157,37 +157,37 @@
 		</header>
 		<form>
 			<div>
-				<label for="display-period">Display period</label>
+				<label for="displayPeriod">Display period</label>
 				<span class="description"
 					>The period of time to display the downloads for on the badge.
 				</span>
-				<select name="period" id="display-period">
+				<select name="period" id="displayPeriod">
 					<option value="lastDay">Last Day</option>
 					<option value="lastWeek">Last Week</option>
 					<option value="lastMonth">Last Month</option>
 				</select>
 			</div>
 			<div>
-				<label for="cache-duration">Cache duration (days)</label>
+				<label for="cacheDuration">Cache duration (days)</label>
 				<span class="description"
 					>The period of time to cache the downloads for. 0 to fetch new
 					downloads on each page load, 7 to cache for a week.
 				</span>
 				<input
 					type="number"
-					name="cache-duration"
-					id="cache-duration"
+					name="cacheDuration"
+					id="cacheDuration"
 					min="0"
 					max="7"
 				/>
 			</div>
 			<div>
-				<label for="use-npm-logo">Use npm logo</label>
+				<label for="useNpmLogo">Use npm logo</label>
 				<span class="description"
 					>Whether to use the 'downloads' text and download icon or the npm
 					logo.
 				</span>
-				<input type="checkbox" name="use-npm-logo" id="use-npm-logo" />
+				<input type="checkbox" name="useNpmLogo" id="useNpmLogo" />
 			</div>
 		</form>
 	</body>

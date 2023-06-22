@@ -36,23 +36,16 @@ const defaultOptions: Options = {
 };
 
 chrome.storage.sync.get(
-	['display-period', 'cache-duration', 'use-npm-logo'],
-	({
-		'display-period': displayPeriod,
-		'cache-duration': cacheDuration,
-		'use-npm-logo': useNpmLogo,
-	}) => {
-		const opts = { displayPeriod, cacheDuration, useNpmLogo };
+	Object.keys(defaultOptions),
+	(opts: Partial<Options>) => {
 		for (let i = 0; i < Object.keys(defaultOptions).length; i++) {
 			const key = Object.keys(defaultOptions)[i] as keyof Options;
 			if (opts[key] === undefined) {
-				opts[key] = defaultOptions[key];
-				chrome.storage.sync.set({
-					[key]: defaultOptions[key],
-				});
+				opts[key] = defaultOptions[key] as any;
 			}
+			chrome.storage.sync.set({ [key]: opts[key] });
 		}
-		processPage(opts);
-		handleNavigation(opts);
+		processPage(opts as Options);
+		handleNavigation(opts as Options);
 	},
 );
