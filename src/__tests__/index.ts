@@ -59,6 +59,7 @@ describe('cache', () => {
 					{
 						displayPeriod: 'lastDay',
 						cacheDuration: 1,
+						useNpmLogo: false,
 					},
 				),
 			).toEqual(true);
@@ -74,6 +75,7 @@ describe('cache', () => {
 					{
 						displayPeriod: 'lastDay',
 						cacheDuration: 1,
+						useNpmLogo: false,
 					},
 				),
 			).toEqual(false);
