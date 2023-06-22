@@ -97,7 +97,9 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
             <span data-view-component="true" class="d-inline"> Downloads </span>
             `}
             <span
-                aria-label="${pkg.stats[opts.displayPeriod].toLocaleString()} npm downloads in the last day"
+                aria-label="${pkg.stats[opts.displayPeriod].toLocaleString()} npm downloads in the ${opts.displayPeriod.replace(
+                    'last', 'last ',
+                ).toLowerCase()}"
                 data-turbo-replace="true"
                 title="${pkg.stats[opts.displayPeriod].toLocaleString()}"
                 data-view-component="true"
