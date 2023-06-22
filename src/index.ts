@@ -32,23 +32,25 @@ const handleNavigation = (opts: Options) => {
 const defaultOptions: Options = {
 	displayPeriod: 'lastDay',
 	cacheDuration: 7,
+	useNpmLogo: false,
 };
 
 chrome.storage.sync.get(
-	['display-period', 'cache-duration'],
-	({ 'display-period': displayPeriod, 'cache-duration': cacheDuration }) => {
-		const opts = { displayPeriod, cacheDuration };
-		if (!opts.displayPeriod) {
-			chrome.storage.sync.set({
-				'display-period': defaultOptions.displayPeriod,
-			});
-			opts.displayPeriod = defaultOptions.displayPeriod;
-		}
-		if (!opts.cacheDuration) {
-			chrome.storage.sync.set({
-				'cache-duration': defaultOptions.cacheDuration,
-			});
-			opts.cacheDuration = defaultOptions.cacheDuration;
+	['display-period', 'cache-duration', 'use-npm-logo'],
+	({
+		'display-period': displayPeriod,
+		'cache-duration': cacheDuration,
+		'use-npm-logo': useNpmLogo,
+	}) => {
+		const opts = { displayPeriod, cacheDuration, useNpmLogo };
+		for (let i = 0; i < Object.keys(defaultOptions).length; i++) {
+			const key = Object.keys(defaultOptions)[i] as keyof Options;
+			if (opts[key] === undefined) {
+				opts[key] = defaultOptions[key];
+				chrome.storage.sync.set({
+					[key]: defaultOptions[key],
+				});
+			}
 		}
 		processPage(opts);
 		handleNavigation(opts);

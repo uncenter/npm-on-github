@@ -4,7 +4,7 @@ function saveSelection(event) {
 }
 
 function init() {
-	['display-period', 'cache-duration'].forEach((id) => {
+	['display-period', 'cache-duration', 'use-npm-logo'].forEach((id) => {
 		const element = document.getElementById(id);
 		if (!element) return;
 
