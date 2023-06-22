@@ -47,6 +47,12 @@
 				font-size: 0.9rem;
 				font-weight: 500;
 			}
+			.description {
+				padding: 0.5rem 0;
+				font-size: 0.9rem;
+				font-weight: 400;
+				color: #4a4a4a;
+			}
 			select,
 			input {
 				margin: 0.5rem 0;
@@ -151,10 +157,10 @@
 		</header>
 		<form>
 			<div>
-				<label for="display-period"
-					>Display period - the period of time to display the downloads
-					for</label
-				>
+				<label for="display-period">Display period</label>
+				<span class="description"
+					>The period of time to display the downloads for on the badge.
+				</span>
 				<select name="period" id="display-period">
 					<option value="lastDay">Last Day</option>
 					<option value="lastWeek">Last Week</option>
@@ -162,10 +168,11 @@
 				</select>
 			</div>
 			<div>
-				<label for="cache-duration"
-					>Cache duration (days) - the period of time to cache the downloads
-					for</label
-				>
+				<label for="cache-duration">Cache duration (days)</label>
+				<span class="description"
+					>The period of time to cache the downloads for. 0 to fetch new
+					downloads on each page load, 7 to cache for a week.
+				</span>
 				<input
 					type="number"
 					name="cache-duration"
@@ -175,10 +182,11 @@
 				/>
 			</div>
 			<div>
-				<label for="use-npm-logo"
-					>Use the npm logo - whether to use the 'downloads' text and icon or
-					the npm logo</label
-				>
+				<label for="use-npm-logo">Use npm logo</label>
+				<span class="description"
+					>Whether to use the 'downloads' text and download icon or the npm
+					logo.
+				</span>
 				<input type="checkbox" name="use-npm-logo" id="use-npm-logo" />
 			</div>
 		</form>
