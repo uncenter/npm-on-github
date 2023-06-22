@@ -29,10 +29,27 @@ const handleNavigation = (opts: Options) => {
 	observer.observe(pageContainer, { childList: true });
 };
 
+const defaultOptions: Options = {
+	displayPeriod: 'lastDay',
+	cacheDuration: 7,
+};
+
 chrome.storage.sync.get(
 	['display-period', 'cache-duration'],
 	({ 'display-period': displayPeriod, 'cache-duration': cacheDuration }) => {
 		const opts = { displayPeriod, cacheDuration };
+		if (!opts.displayPeriod) {
+			chrome.storage.sync.set({
+				'display-period': defaultOptions.displayPeriod,
+			});
+			opts.displayPeriod = defaultOptions.displayPeriod;
+		}
+		if (!opts.cacheDuration) {
+			chrome.storage.sync.set({
+				'cache-duration': defaultOptions.cacheDuration,
+			});
+			opts.cacheDuration = defaultOptions.cacheDuration;
+		}
 		processPage(opts);
 		handleNavigation(opts);
 	},

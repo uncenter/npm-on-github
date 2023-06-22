@@ -14,4 +14,5 @@ function init() {
 		});
 	});
 }
+
 init();
