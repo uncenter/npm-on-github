@@ -144,10 +144,10 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 	injectionPoint
 		.querySelector('#npm-stats-refresh')
 		?.addEventListener('click', async () => {
-			let refreshedPkg = await newPackage(pkg.owner, pkg.repo);
-			if (refreshedPkg?.stats) {
+			let newPkg = await newPackage(pkg.owner, pkg.repo);
+			if (newPkg?.stats) {
 				chart.destroy();
-				injectContent(refreshedPkg as Package, opts, true);
+				injectContent(newPkg as Package, opts, true);
 				logger.success('Refreshed stats successfully!');
 			} else {
 				logger.warn('Failed to refresh stats.');
