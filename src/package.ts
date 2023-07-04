@@ -96,10 +96,7 @@ export async function newPackage(
 	if (!npmData) return nullPkg;
 
 	let matchingRepo = false;
-	if (
-		npmData.repository.url !== undefined &&
-		npmData.repository.url.includes('github.com')
-	) {
+	if (npmData?.repository?.url.includes('github.com')) {
 		const ownerAndRepo = getOwnerAndRepo(npmData.repository.url);
 		if (ownerAndRepo?.owner === owner && ownerAndRepo?.repo === repo) {
 			matchingRepo = true;
