@@ -1,7 +1,8 @@
 <div align="center">
-    <img src="images/logo.svg" width="75">
-    <h1>NPM on GitHub</h1>
-    <p>View NPM package downloads right on GitHub.</p>
+<h1>NPM on GitHub</h1>
+
+View NPM package downloads right on GitHub.
+
 </div>
 
 ![A screenshot of the injected NPM package download button and chart.](/images/demo.png)
