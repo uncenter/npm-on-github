@@ -1,9 +1,6 @@
-<div align="center">
 <h1>NPM on GitHub</h1>
 
 View NPM package downloads right on GitHub.
-
-</div>
 
 ![A screenshot of the injected NPM package download button and chart.](/images/demo.png)
 
@@ -11,24 +8,16 @@ View NPM package downloads right on GitHub.
 
 ## Installation
 
-### Build from source
-
 ```bash
 git clone https://github.com/uncenter/npm-on-github.git && cd npm-on-github
 pnpm install
 pnpm run build
 ```
 
-### Download from releases
-
-Coming soon!
-
-### Install as a Chrome extension
-
 Then, follow the instructions below for Chrome/Chromium browsers (only browser supported at the moment).
 
 1. Open the Extensions page by navigating to `chrome://extensions`.
-2. Enable Developer Mode by clicking the toggle switch next to **Developer mode**.
+2. Enable Developer Mode by flipping the toggle switch labeled **Developer mode**.
 3. Click the **Load unpacked** button and select the `dist` directory from the cloned repository.
 4. Enjoy!
 
