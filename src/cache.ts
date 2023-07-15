@@ -6,9 +6,7 @@ export function generateCacheKey(owner: string, repo: string): string {
 
 export function isFresh(cache: Package, opts: Options): boolean {
 	if (!cache) return false;
-	return (
-		cache.lastChecked > Date.now() - opts.cacheDuration * 24 * 60 * 60 * 1000
-	);
+	return cache.lastChecked > Date.now() - opts.cacheDuration * 24 * 60 * 60 * 1000;
 }
 
 export function getCache(cacheKey: string): Package | null {

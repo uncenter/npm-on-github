@@ -4,66 +4,56 @@ import { newPackage } from './package';
 import { formatNumber, logger } from './utils';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
-	const chart = new Chart(
-		document.getElementById(canvasId) as HTMLCanvasElement,
-		{
-			type: 'line',
-			data: {
-				labels: stats.full.downloads.map((d) => d.day),
-				datasets: [
-					{
-						label: 'Downloads',
-						data: stats.full.downloads.map((d) => d.downloads),
-						borderWidth: 1,
-						borderColor: '#28a745',
-					},
-				],
-			},
-			options: {
-				plugins: {
-					legend: {
-						display: false,
-					},
-					tooltip: {
-						backgroundColor: '#28a745',
-						titleColor: '#fff',
-						bodyColor: '#fff',
-						callbacks: {
-							title: (context: any) =>
-								context[0].label ? context[0].label : context[0].parsed.x,
-							label: (context: any) => context.parsed.y.toLocaleString(),
-						},
+	const chart = new Chart(document.getElementById(canvasId) as HTMLCanvasElement, {
+		type: 'line',
+		data: {
+			labels: stats.full.downloads.map((d) => d.day),
+			datasets: [
+				{
+					label: 'Downloads',
+					data: stats.full.downloads.map((d) => d.downloads),
+					borderWidth: 1,
+					borderColor: '#28a745',
+				},
+			],
+		},
+		options: {
+			plugins: {
+				legend: {
+					display: false,
+				},
+				tooltip: {
+					backgroundColor: '#28a745',
+					titleColor: '#fff',
+					bodyColor: '#fff',
+					callbacks: {
+						title: (context: any) => (context[0].label ? context[0].label : context[0].parsed.x),
+						label: (context: any) => context.parsed.y.toLocaleString(),
 					},
 				},
-				scales: {
-					y: {
-						ticks: {
-							callback(value: any, index: any, values: any) {
-								return value.toLocaleString();
-							},
+			},
+			scales: {
+				y: {
+					ticks: {
+						callback(value: any, index: any, values: any) {
+							return value.toLocaleString();
 						},
 					},
 				},
 			},
 		},
-	);
+	});
 	return chart;
 }
 
 export function injectContent(pkg: Package, opts: Options, refresh = false) {
 	if (!pkg.stats) return;
 	const injectionPoint = document.querySelector('ul.pagehead-actions');
-	if (
-		!injectionPoint ||
-		(injectionPoint.querySelector('.npm-stats') && !refresh)
-	)
-		return;
+	if (!injectionPoint || (injectionPoint.querySelector('.npm-stats') && !refresh)) return;
 
 	let chart: Chart;
 	const observer = new MutationObserver((mutations) => {
-		const chartCanvas = document.getElementById(
-			'npm-stats-chart',
-		) as HTMLCanvasElement;
+		const chartCanvas = document.getElementById('npm-stats-chart') as HTMLCanvasElement;
 		if (!chartCanvas) return;
 		observer.disconnect();
 		chart = renderChart('npm-stats-chart', pkg.stats as Stats);
@@ -141,23 +131,17 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
         </details>
     </div>`;
 	injectionPoint.appendChild(li);
-	injectionPoint
-		.querySelector('#npm-stats-refresh')
-		?.addEventListener('click', async () => {
-			let newPkg = await newPackage(pkg.owner, pkg.repo);
-			if (newPkg?.stats) {
-				chart.destroy();
-				injectContent(newPkg as Package, opts, true);
-				logger.success('Refreshed stats successfully!');
-			} else {
-				logger.warn('Failed to refresh stats.');
-			}
-		});
-	injectionPoint
-		.querySelector('#npm-stats-close')
-		?.addEventListener('click', () => {
-			injectionPoint
-				.querySelector('#npm-stats-details')
-				?.removeAttribute('open');
-		});
+	injectionPoint.querySelector('#npm-stats-refresh')?.addEventListener('click', async () => {
+		let newPkg = await newPackage(pkg.owner, pkg.repo);
+		if (newPkg?.stats) {
+			chart.destroy();
+			injectContent(newPkg as Package, opts, true);
+			logger.success('Refreshed stats successfully!');
+		} else {
+			logger.warn('Failed to refresh stats.');
+		}
+	});
+	injectionPoint.querySelector('#npm-stats-close')?.addEventListener('click', () => {
+		injectionPoint.querySelector('#npm-stats-details')?.removeAttribute('open');
+	});
 }
