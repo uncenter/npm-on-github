@@ -28,7 +28,6 @@ Then, follow the instructions below for Chrome/Chromium browsers (only browser s
   - [ ] Safari
   - [ ] Edge
 - [ ] Publish to Chrome Web Store
-- [ ] Enable/disable extension from the popup
 - [ ] Reduce `vendor.js` bundle size by only importing the necessary parts of `chart.js`
 - [ ] Fix MutationObserver not processing page after switching repositories
 
