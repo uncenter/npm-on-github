@@ -12,6 +12,7 @@ async function fetchPackageJsonContents(owner: string, repo: string) {
 		}
 
 		const packageJson = JSON.parse(atob((await response.json()).content));
+		// When publishing to npm, name and version are required fields and private packages are rejected.
 		if (!packageJson.name || !packageJson.version || packageJson.private) {
 			return;
 		}
@@ -68,35 +69,31 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 	};
 	let pkg: Package;
 
-	const packageJson = await fetchPackageJsonContents(owner, repo);
-	const npmPackageData = packageJson ? await fetchNpmPackageData(packageJson.name) : null;
-	if (!npmPackageData) return nullPkg;
+	const pkgJson = await fetchPackageJsonContents(owner, repo);
+	const pkgData = pkgJson ? await fetchNpmPackageData(pkgJson.name) : null;
+	if (!pkgData) return nullPkg;
 
 	let matchingRepo = false;
-	if (npmPackageData?.repository?.url.includes('github.com')) {
-		const ownerAndRepo = getOwnerAndRepo(npmPackageData.repository.url);
+	if (pkgData?.repository?.url.includes('github.com')) {
+		const ownerAndRepo = getOwnerAndRepo(pkgData.repository.url);
 		if (ownerAndRepo?.owner === owner && ownerAndRepo?.repo === repo) {
 			matchingRepo = true;
 		}
 	}
 	if (
 		matchingRepo ||
-		(!matchingRepo &&
-			packageJson.name === npmPackageData.name &&
-			packageJson.version === npmPackageData.version)
+		(!matchingRepo && pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)
 	) {
-		const stats = await fetchPackageDownloadStats(packageJson.name);
+		const stats = await fetchPackageDownloadStats(pkgJson.name);
 		pkg = {
 			owner,
 			repo,
-			name: packageJson.name,
+			name: pkgJson.name,
 			lastChecked: Date.now(),
 			stats: stats ? stats : undefined,
 		};
 
-		if (!stats) {
-			logger.error(`Failed to fetch stats for "${packageJson.name}" from npm.`);
-		}
+		if (!stats) logger.error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
 	} else {
 		let reason = matchingRepo ? 'name and version mismatch' : 'package.json repository URL mismatch';
 		logger.log(`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`);
@@ -108,12 +105,11 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 
 export async function retrievePackage(owner: string, repo: string, opts: Options): Promise<Package> {
 	let cache = getCache(generateCacheKey(owner, repo));
-	// Get a new package if the cache doesn't exist, is stale, or has no name or stats and was last checked more than 12 hours ago
 	if (
 		!cache ||
 		!isFresh(cache, opts) ||
-		(cache.name && !cache.stats) ||
-		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000)
+		(cache.name && !cache.stats) || // Stats are missing but the package exists? Try to get stats again.
+		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // No name or stats and last checked more than 12 hours ago? Try to get the package again.
 	) {
 		cache = await newPackage(owner, repo);
 	}
