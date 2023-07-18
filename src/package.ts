@@ -12,10 +12,8 @@ async function fetchPackageJsonContents(owner: string, repo: string) {
 		}
 
 		const packageJson = JSON.parse(atob((await response.json()).content));
-		// When publishing to npm, name and version are required fields and private packages are rejected.
-		if (!packageJson.name || !packageJson.version || packageJson.private) {
-			return;
-		}
+		// When publishing to npm, name and version are required fields.
+		if (!packageJson.name || !packageJson.version) return;
 		return packageJson;
 	} catch (e) {
 		return;
@@ -74,7 +72,7 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 	if (!pkgData) return nullPkg;
 
 	let matchingRepo = false;
-	if (pkgData?.repository?.url.includes('github.com')) {
+	if (pkgData?.repository?.url?.includes('github.com')) {
 		const ownerAndRepo = getOwnerAndRepo(pkgData.repository.url);
 		if (ownerAndRepo?.owner === owner && ownerAndRepo?.repo === repo) {
 			matchingRepo = true;
