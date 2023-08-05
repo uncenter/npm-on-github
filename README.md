@@ -40,7 +40,7 @@ Please make sure to update tests as appropriate.
 
 ## Acknowledgment
 
-This project was originally created by [Ahmet Katrancı](https://github.com/katranci), called [github-npm-stats](https://github.com/katranci/github-npm-stats) (check it out!). I loved the idea and wanted to contribute to it, but it appears that the project is no longer maintained, and it was due for a rewrite with modern build tools and Typescript. The original project was licensed under the [MIT](https://choosealicense.com/licenses/mit/) license - as is this project.
+This project was originally created by [Ahmet Katrancı](https://github.com/katranci), called [github-npm-stats](https://github.com/katranci/github-npm-stats) (check it out!). I loved the idea and wanted to contribute to it, but it appears that the project is no longer maintained, and it was due for a rewrite with modern build tools and TypeScript. The original project was licensed under the [MIT](https://choosealicense.com/licenses/mit/) license - as is this project.
 
 ## License
 
