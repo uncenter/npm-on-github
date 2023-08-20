@@ -73,6 +73,12 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 	const pkgData = pkgJson ? await fetchNpmPackageData(pkgJson.name) : null;
 	if (!pkgData) return nullPkg;
 
+	const isVscodeExtension = Boolean(pkgJson.engines?.vscode && pkgJson.publisher);
+	if (isVscodeExtension) {
+		logger.warn('Error: package.json is for a Visual Studio Code extension.');
+		return nullPkg;
+	}
+
 	let matchingRepo = false;
 	if (pkgData?.repository?.url?.includes('github.com')) {
 		const ownerAndRepo = getOwnerAndRepo(pkgData.repository.url);

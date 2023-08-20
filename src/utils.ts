@@ -36,15 +36,15 @@ export const formatNumber = (num: number | string): string => {
 
 export const logger = {
 	error: (message: string) => {
-		console.error(`%c[npm-on-github]: ${message}`, 'color: red');
+		console.error(`%c[npm-on-github] ${message}`, 'color: red');
 	},
 	warn: (message: string) => {
-		console.log(`%c[npm-on-github]: ${message}`, 'color: orange');
+		console.log(`%c[npm-on-github] ${message}`, 'color: orange');
 	},
 	success: (message: string) => {
-		console.log(`%c[npm-on-github]: ${message}`, 'color: green');
+		console.log(`%c[npm-on-github] ${message}`, 'color: green');
 	},
 	log: (message: string) => {
-		console.log(`[npm-on-github]: ${message}`);
+		console.log(`[npm-on-github] ${message}`);
 	},
 };
