@@ -5,7 +5,9 @@ import { logger } from './utils';
 
 async function fetchPackageJsonContents(owner: string, repo: string) {
 	try {
-		const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/package.json`);
+		const response = await fetch(
+			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
+		);
 		if (response.status === 403 || response.status === 404) {
 			logger.log(`No package.json found for ${owner}/${repo}.`);
 			return;
@@ -93,15 +95,23 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 
 		if (!stats) logger.error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
 	} else {
-		let reason = matchingRepo ? 'name and version mismatch' : 'package.json repository URL mismatch';
-		logger.log(`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`);
+		let reason = matchingRepo
+			? 'name and version mismatch'
+			: 'package.json repository URL mismatch';
+		logger.log(
+			`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`,
+		);
 		pkg = nullPkg;
 	}
 	setCache(generateCacheKey(owner, repo), pkg);
 	return pkg;
 }
 
-export async function retrievePackage(owner: string, repo: string, opts: Options): Promise<Package> {
+export async function retrievePackage(
+	owner: string,
+	repo: string,
+	opts: Options,
+): Promise<Package> {
 	let cache = getCache(generateCacheKey(owner, repo));
 	if (
 		!cache ||

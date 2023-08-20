@@ -12,7 +12,7 @@
 		"zip": "npm run build && zip -r extension.zip dist/*",
 		"clean": "rimraf dist/",
 		"test": "jest",
-		"style": "prettier --write \"src/**/*.ts\""
+		"format": "prettier --write \"src/**/*.ts\""
 	},
 	"license": "MIT",
 	"dependencies": {
