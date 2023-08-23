@@ -1,50 +1,52 @@
-import { isFresh } from '../cache';
-import { formatNumber, getOwnerAndRepo } from '../utils';
+import { describe, expect, test } from 'vitest';
+
+import { isFresh } from '../src/cache';
+import { formatNumber, getOwnerAndRepo } from '../src/utils';
 
 describe('getOwnerAndRepo', () => {
-	it('should return owner and repo', () => {
+	test('should return owner and repo', () => {
 		expect(getOwnerAndRepo('https://github.com/uncenter/npm-on-github')).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	it('should return owner and repo for git+https', () => {
+	test('should return owner and repo for git+https', () => {
 		expect(getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github.git')).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	it('should return owner and repo for git+ssh', () => {
+	test('should return owner and repo for git+ssh', () => {
 		expect(getOwnerAndRepo('git+ssh://github.com/uncenter/npm-on-github.git')).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	it('should return owner and repo for git', () => {
+	test('should return owner and repo for git', () => {
 		expect(getOwnerAndRepo('git://github.com/uncenter/npm-on-github.git')).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	it('should return owner and repo with no .git', () => {
+	test('should return owner and repo with no .git', () => {
 		expect(getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github')).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	it('should return owner and repo if .git is in the middle', () => {
+	test('should return owner and repo if .git is in the middle', () => {
 		expect(getOwnerAndRepo('git+https://github.com/example/.gitingore')).toEqual({
 			owner: 'example',
 			repo: '.gitingore',
 		});
 	});
-	it('should return null if no owner or repo', () => {
+	test('should return null if no owner or repo', () => {
 		expect(getOwnerAndRepo('git+https://github.com')).toEqual(null);
 	});
 });
 
 describe('formatNumber', () => {
-	it('should format numbers', () => {
+	test('should format numbers', () => {
 		expect(formatNumber(1000000000)).toEqual('1b');
 		expect(formatNumber(1000000)).toEqual('1m');
 		expect(formatNumber(1000)).toEqual('1k');
@@ -54,7 +56,7 @@ describe('formatNumber', () => {
 
 describe('cache', () => {
 	describe('isFresh', () => {
-		it('should return true if cache is fresh', () => {
+		test('should return true if cache is fresh', () => {
 			expect(
 				isFresh(
 					{
@@ -70,7 +72,7 @@ describe('cache', () => {
 				),
 			).toEqual(true);
 		});
-		it('should return false if cache is not fresh', () => {
+		test('should return false if cache is not fresh', () => {
 			expect(
 				isFresh(
 					{
