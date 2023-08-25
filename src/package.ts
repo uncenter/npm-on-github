@@ -1,5 +1,5 @@
 import type { NpmResponse, Options, Package, Stats } from './types';
-import { generateCacheKey, getCache, isFresh, setCache } from './cache';
+import { getCache, setCache, isFresh } from './cache';
 import { getOwnerAndRepo } from './utils';
 import { log, warn, error } from './utils';
 
@@ -107,7 +107,7 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 		log(`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`);
 		pkg = nullPkg;
 	}
-	setCache(generateCacheKey(owner, repo), pkg);
+	setCache(owner, repo, pkg);
 	return pkg;
 }
 
@@ -116,7 +116,7 @@ export async function retrievePackage(
 	repo: string,
 	opts: Options,
 ): Promise<Package> {
-	let cache = getCache(generateCacheKey(owner, repo));
+	let cache = getCache(owner, repo);
 	if (
 		!cache ||
 		!isFresh(cache, opts) ||
