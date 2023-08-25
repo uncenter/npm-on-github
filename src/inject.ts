@@ -53,8 +53,7 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 
 	let chart: Chart;
 	const observer = new MutationObserver((mutations) => {
-		const chartCanvas = document.getElementById('npm-stats-chart') as HTMLCanvasElement;
-		if (!chartCanvas) return;
+		if (!document.getElementById('npm-stats-chart')) return;
 		observer.disconnect();
 		chart = renderChart('npm-stats-chart', pkg.stats as Stats);
 	});
@@ -132,7 +131,7 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
     </div>`;
 	injectionPoint.appendChild(li);
 	injectionPoint.querySelector('#npm-stats-refresh')?.addEventListener('click', async () => {
-		let newPkg = await newPackage(pkg.owner, pkg.repo);
+		const newPkg = await newPackage(pkg.owner, pkg.repo);
 		if (newPkg?.stats) {
 			chart.destroy();
 			injectContent(newPkg as Package, opts, true);

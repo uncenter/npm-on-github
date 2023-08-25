@@ -7,7 +7,7 @@ const processPage = async (opts: Options) => {
 	const { owner, repo } = getOwnerAndRepo(location.href) || {};
 	if (!owner || !repo) return;
 	let pkg = await retrievePackage(owner, repo, opts);
-	if (!pkg || !pkg.stats) return;
+	if (!pkg) return;
 	injectContent(pkg as Package, opts);
 };
 
