@@ -16,7 +16,7 @@ export function getOwnerAndRepo(url: string) {
 	return null;
 }
 
-export const formatNumber = (num: number | string): string => {
+export function formatNumber(num: number | string) {
 	num = Number(num);
 	if (num >= 1000000000) {
 		return `${Math.round(num / 100000000) / 10}b`;
@@ -28,19 +28,20 @@ export const formatNumber = (num: number | string): string => {
 		return `${Math.round(num / 100) / 10}k`;
 	}
 	return `${num}`;
-};
+}
 
-export const logger = {
-	error: (message: string) => {
-		console.error(`%c[npm-on-github] ${message}`, 'color: red');
-	},
-	warn: (message: string) => {
-		console.log(`%c[npm-on-github] ${message}`, 'color: orange');
-	},
-	success: (message: string) => {
-		console.log(`%c[npm-on-github] ${message}`, 'color: green');
-	},
-	log: (message: string) => {
-		console.log(`[npm-on-github] ${message}`);
-	},
-};
+export function error(message: string) {
+	console.error(`%c[npm-on-github] ${message}`, 'color: red');
+}
+
+export function warn(message: string) {
+	console.log(`%c[npm-on-github] ${message}`, 'color: orange');
+}
+
+export function success(message: string) {
+	console.log(`%c[npm-on-github] ${message}`, 'color: green');
+}
+
+export function log(message: string) {
+	console.log(`[npm-on-github] ${message}`);
+}

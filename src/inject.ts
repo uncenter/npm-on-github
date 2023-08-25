@@ -1,7 +1,7 @@
 import type { Options, Package, Stats } from './types';
 import { Chart } from 'chart.js/auto';
 import { newPackage } from './package';
-import { formatNumber, logger } from './utils';
+import { formatNumber, success, warn } from './utils';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
 	const chart = new Chart(document.getElementById(canvasId) as HTMLCanvasElement, {
@@ -136,9 +136,9 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 		if (newPkg?.stats) {
 			chart.destroy();
 			injectContent(newPkg as Package, opts, true);
-			logger.success('Refreshed stats successfully!');
+			success('Refreshed stats successfully!');
 		} else {
-			logger.warn('Failed to refresh stats.');
+			warn('Failed to refresh stats.');
 		}
 	});
 	injectionPoint.querySelector('#npm-stats-close')?.addEventListener('click', () => {

@@ -1,7 +1,7 @@
 import type { NpmResponse, Options, Package, Stats } from './types';
 import { generateCacheKey, getCache, isFresh, setCache } from './cache';
 import { getOwnerAndRepo } from './utils';
-import { logger } from './utils';
+import { log, warn, error } from './utils';
 
 async function fetchPackageJsonContents(owner: string, repo: string) {
 	try {
@@ -9,7 +9,7 @@ async function fetchPackageJsonContents(owner: string, repo: string) {
 			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
 		);
 		if (response.status === 403 || response.status === 404) {
-			logger.log(`No package.json found for ${owner}/${repo}.`);
+			log(`No package.json found for ${owner}/${repo}.`);
 			return;
 		}
 
@@ -26,7 +26,7 @@ async function fetchNpmPackageData(packageName: string) {
 	try {
 		const response = await fetch(`https://registry.npmjs.org/${packageName}`);
 		if (response.status === 404) {
-			logger.log(`No package found on npm with the name ${packageName}.`);
+			log(`No package found on npm with the name ${packageName}.`);
 			return;
 		}
 
@@ -75,7 +75,7 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 
 	const isVscodeExtension = Boolean(pkgJson.engines?.vscode && pkgJson.publisher);
 	if (isVscodeExtension) {
-		logger.warn('Error: package.json is for a Visual Studio Code extension.');
+		warn('Error: package.json is for a Visual Studio Code extension.');
 		return nullPkg;
 	}
 
@@ -99,14 +99,12 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 			stats: stats ? stats : undefined,
 		};
 
-		if (!stats) logger.error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
+		if (!stats) error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
 	} else {
 		let reason = matchingRepo
 			? 'name and version mismatch'
 			: 'package.json repository URL mismatch';
-		logger.log(
-			`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`,
-		);
+		log(`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`);
 		pkg = nullPkg;
 	}
 	setCache(generateCacheKey(owner, repo), pkg);
