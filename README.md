@@ -4,8 +4,6 @@ View NPM package downloads right on GitHub.
 
 ![A screenshot of the injected NPM package download button and chart.](/images/chart.png)
 
-> **You can check out other demo images in the [images](/images) directory.**
-
 ## Installation
 
 ```bash
