@@ -2,7 +2,7 @@
 
 View NPM package downloads right on GitHub.
 
-![A screenshot of the injected NPM package download button and chart.](/images/chart.png)
+![A screenshot of the injected NPM package download button and chart.](/docs/images/chart.png)
 
 ## Installation
 
