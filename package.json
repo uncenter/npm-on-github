@@ -7,10 +7,9 @@
 		"url": "https://github.com/uncenter/npm-on-github.git"
 	},
 	"scripts": {
-		"watch": "webpack --config webpack/webpack.dev.js --watch",
-		"build": "webpack --config webpack/webpack.prod.js",
-		"zip": "pnpm build && zip -r extension.zip dist/*",
+		"build": "node ./build.mjs",
 		"clean": "rimraf dist/",
+		"zip": "pnpm build && zip -r extension.zip dist/*",
 		"test": "vitest",
 		"format": "prettier --write ."
 	},
@@ -21,15 +20,10 @@
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.243",
-		"copy-webpack-plugin": "^11.0.0",
+		"esbuild": "^0.19.2",
 		"prettier": "^3.0.2",
 		"rimraf": "^5.0.1",
-		"ts-loader": "^9.4.4",
-		"typescript": "^5.1.6",
-		"vitest": "^0.34.2",
-		"webpack": "^5.88.2",
-		"webpack-cli": "^5.1.4",
-		"webpack-merge": "^5.9.0"
+		"vitest": "^0.34.2"
 	},
 	"packageManager": "pnpm@8.6.12"
 }
