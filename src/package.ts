@@ -1,48 +1,46 @@
 import type { NpmResponse, Options, Package, Stats } from './types';
+import type { PackageJson } from 'pkg-types';
 import { getCache, setCache, isFresh } from './cache';
 import { getOwnerAndRepo } from './utils';
 import { log, warn, error } from './utils';
 
-async function fetchPackageJsonContents(owner: string, repo: string) {
+async function fetchPackageJson(owner: string, repo: string): Promise<PackageJson | null> {
 	try {
-		const response = await fetch(
-			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
-		);
-		if (response.status === 403 || response.status === 404) {
+		const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/package.json`);
+		if (res.status === 403 || res.status === 404) {
 			log(`No package.json found for ${owner}/${repo}.`);
-			return;
+			return null;
 		}
 
-		const packageJson = JSON.parse(atob((await response.json()).content));
-		// When publishing to npm, name and version are required fields.
-		if (!packageJson.name || !packageJson.version) return;
+		const packageJson = JSON.parse(atob((await res.json()).content)) as PackageJson;
 		return packageJson;
-	} catch (e) {
-		return;
+	} catch {
+		return null;
 	}
 }
 
-async function fetchNpmPackageData(packageName: string) {
+async function fetchNpmData(packageName: string): Promise<Record<string, any> | null> {
 	try {
-		const response = await fetch(`https://registry.npmjs.org/${packageName}`);
-		if (response.status === 404) {
+		const res = await fetch(`https://registry.npmjs.org/${packageName}`);
+		if (res.status === 404) {
 			log(`No package found on npm with the name ${packageName}.`);
-			return;
+			return null;
 		}
 
-		return await response.json();
-	} catch (e) {
-		return;
+		return await res.json();
+	} catch {
+		return null;
 	}
 }
 
-export async function fetchPackageDownloadStats(packageName: string): Promise<Stats | null> {
+export async function fetchPackageDownloads(pkg: string): Promise<Stats | null> {
 	try {
-		const response = await fetch(`https://api.npmjs.org/downloads/range/last-month/${packageName}`);
+		const res = await fetch(`https://api.npmjs.org/downloads/range/last-month/${pkg}`);
+		if (res.status === 404) return null;
 
-		if (response.status === 404) return null;
-		const responseBody = (await response.json()) as NpmResponse;
-		const { downloads } = responseBody;
+		const response = (await res.json()) as NpmResponse;
+		const { downloads } = response;
+
 		const lastDay = downloads[downloads.length - 1].downloads;
 		const lastWeek = downloads
 			.slice(downloads.length - 7, downloads.length)
@@ -50,78 +48,70 @@ export async function fetchPackageDownloadStats(packageName: string): Promise<St
 		const lastMonth = downloads.reduce((sum: any, day: any) => sum + day.downloads, 0);
 
 		return {
-			full: responseBody,
+			full: response,
 			lastDay,
 			lastWeek,
 			lastMonth,
 		};
-	} catch (e) {
+	} catch {
 		return null;
 	}
 }
 
 export async function newPackage(owner: string, repo: string): Promise<Package> {
-	const nullPkg: Package = {
+	const nullPkg = {
 		owner,
 		repo,
 		name: undefined,
 		lastChecked: Date.now(),
-	};
-	let pkg: Package;
+	} as Package;
+	let pkg = nullPkg;
 
-	const pkgJson = await fetchPackageJsonContents(owner, repo);
-	const pkgData = pkgJson ? await fetchNpmPackageData(pkgJson.name) : null;
-	if (!pkgData) return nullPkg;
-
-	const isVscodeExtension = Boolean(pkgJson.engines?.vscode && pkgJson.publisher);
-	if (isVscodeExtension) {
+	const pkgJson = await fetchPackageJson(owner, repo);
+	// When publishing to npm, name and version are required fields.
+	if (!pkgJson || !pkgJson.name || !pkgJson.version) return nullPkg;
+	// Check if the package.json has required properties for a VSCode package (https://code.visualstudio.com/api/references/extension-manifest).
+	if (Boolean(pkgJson.engines?.vscode && pkgJson.publisher)) {
 		warn('Error: package.json is for a Visual Studio Code extension.');
 		return nullPkg;
 	}
 
-	let matchingRepo = false;
-	if (pkgData?.repository?.url?.includes('github.com')) {
-		const ownerAndRepo = getOwnerAndRepo(pkgData.repository.url);
-		if (ownerAndRepo?.owner === owner && ownerAndRepo?.repo === repo) {
-			matchingRepo = true;
-		}
-	}
-	if (
-		matchingRepo ||
-		(!matchingRepo && pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)
-	) {
-		const stats = await fetchPackageDownloadStats(pkgJson.name);
+	const pkgData = await fetchNpmData(pkgJson.name);
+	if (!pkgData) return nullPkg;
+
+	const repositoryMatches =
+		pkgData?.repository?.url?.includes('github.com') &&
+		getOwnerAndRepo(pkgData.repository.url)?.owner === owner &&
+		getOwnerAndRepo(pkgData.repository.url)?.repo === repo;
+
+	if (repositoryMatches || (pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)) {
 		pkg = {
 			owner,
 			repo,
 			name: pkgJson.name,
 			lastChecked: Date.now(),
-			stats: stats ? stats : undefined,
+			stats: (await fetchPackageDownloads(pkgJson.name)) || undefined,
 		};
 
-		if (!stats) error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
+		if (!pkg.stats) error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
 	} else {
-		let reason = matchingRepo
-			? 'name and version mismatch'
-			: 'package.json repository URL mismatch';
-		log(`Could not match package.json for ${owner}/${repo} to a package on npm (${reason}).`);
-		pkg = nullPkg;
+		log(
+			`Could not match package.json for ${owner}/${repo} to a package on npm (${
+				repositoryMatches ? 'name and version mismatch' : 'package.json repository URL mismatch'
+			}).`,
+		);
 	}
 	setCache(owner, repo, pkg);
 	return pkg;
 }
 
-export async function retrievePackage(
-	owner: string,
-	repo: string,
-	opts: Options,
-): Promise<Package> {
+export async function getPackage(owner: string, repo: string, opts: Options): Promise<Package> {
 	let cache = getCache(owner, repo);
 	if (
-		!cache ||
-		!isFresh(cache, opts) ||
-		(cache.name && !cache.stats) || // Stats are missing but the package exists? Try to get stats again.
-		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // No name or stats and last checked more than 12 hours ago? Try to get the package again.
+		!cache || // If no cache...
+		!isFresh(cache, opts) || // or the cache is expired...
+		(cache.name && !cache.stats) || // or the stats are missing but the package exists...
+		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // or no name & no stats and was last checked more than 12 hours ago?
 	) {
 		cache = await newPackage(owner, repo);
 	}

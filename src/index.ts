@@ -1,12 +1,12 @@
 import type { Options, Package } from './types';
 import { injectContent } from './inject';
-import { retrievePackage } from './package';
+import { getPackage } from './package';
 import { getOwnerAndRepo } from './utils';
 
 const processPage = async (opts: Options) => {
 	const { owner, repo } = getOwnerAndRepo(location.href) || {};
 	if (!owner || !repo) return;
-	let pkg = await retrievePackage(owner, repo, opts);
+	let pkg = await getPackage(owner, repo, opts);
 	if (!pkg) return;
 	injectContent(pkg as Package, opts);
 };
