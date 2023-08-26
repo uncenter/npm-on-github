@@ -2,7 +2,7 @@ import { build } from 'esbuild';
 import { copyPlugin } from './copy.mjs';
 
 await build({
-	entryPoints: [{ out: 'js/content_script', in: 'src/index.ts' }],
+	entryPoints: [{ out: 'content_script', in: 'src/index.ts' }],
 	bundle: true,
 	minify: true,
 	outdir: 'dist',
