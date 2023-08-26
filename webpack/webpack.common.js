@@ -1,12 +1,12 @@
-const path = require('path');
+const { join } = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
-		content_script: path.join(__dirname, '..', 'src', 'index.ts'),
+		content_script: join(__dirname, '../src/index.ts'),
 	},
 	output: {
-		path: path.join(__dirname, '../dist/js'),
+		path: join(__dirname, '../dist/js'),
 		filename: '[name].js',
 	},
 	optimization: {
@@ -21,14 +21,14 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.tsx?$/,
+				test: /\.ts$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
 			},
 		],
 	},
 	resolve: {
-		extensions: ['.ts', '.js'],
+		extensions: ['.ts'],
 	},
 	plugins: [
 		new CopyPlugin({
