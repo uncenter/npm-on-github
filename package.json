@@ -1,11 +1,7 @@
 {
 	"name": "npm-on-github",
 	"description": "View NPM package downloads for Github repositories.",
-	"author": "uncenter (https://uncenter.dev)",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/uncenter/npm-on-github.git"
-	},
+	"author": "uncenter <hi@uncenter.dev>",
 	"scripts": {
 		"build": "node ./build.mjs",
 		"clean": "rimraf dist/",
@@ -24,5 +20,5 @@
 		"rimraf": "^5.0.1",
 		"vitest": "^0.34.2"
 	},
-	"packageManager": "pnpm@8.6.12"
+	"packageManager": "pnpm@8.7.0"
 }
