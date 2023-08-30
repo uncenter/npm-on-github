@@ -15,8 +15,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"chart.js": "^4.3.3",
-		"pkg-types": "^1.0.3"
+		"chart.js": "^4.3.3"
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.243",

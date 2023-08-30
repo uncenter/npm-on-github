@@ -68,6 +68,7 @@ describe('cache', () => {
 						displayPeriod: 'lastDay',
 						cacheDuration: 1,
 						useNpmLogo: false,
+						accessToken: '',
 					},
 				),
 			).toEqual(true);
@@ -84,6 +85,7 @@ describe('cache', () => {
 						displayPeriod: 'lastDay',
 						cacheDuration: 1,
 						useNpmLogo: false,
+						accessToken: '',
 					},
 				),
 			).toEqual(false);

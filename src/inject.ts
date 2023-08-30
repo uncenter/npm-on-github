@@ -131,7 +131,7 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
     </div>`;
 	injectionPoint.appendChild(li);
 	injectionPoint.querySelector('#npm-stats-refresh')?.addEventListener('click', async () => {
-		const newPkg = await newPackage(pkg.owner, pkg.repo);
+		const newPkg = await newPackage(pkg.owner, pkg.repo, opts);
 		if (newPkg?.stats) {
 			chart.destroy();
 			injectContent(newPkg as Package, opts, true);

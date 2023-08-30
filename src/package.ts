@@ -1,13 +1,25 @@
 import type { NpmResponse, Options, Package, Stats } from './types';
-import type { PackageJson } from 'pkg-types';
+import type { PackageJson } from './types/package-json';
 import { getCache, setCache, isFresh } from './cache';
 import { getOwnerAndRepo } from './utils';
 import { log, warn, error } from './utils';
 
-async function fetchPackageJson(owner: string, repo: string): Promise<PackageJson | null> {
+async function fetchPackageJson(
+	owner: string,
+	repo: string,
+	opts: Options,
+): Promise<PackageJson | null> {
 	try {
-		const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/package.json`);
-		if (res.status === 403 || res.status === 404) {
+		const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/package.json`, {
+			headers: opts.accessToken ? { Authorization: `Bearer ${opts.accessToken}` } : {},
+		});
+		if (
+			res.status === 403 &&
+			((await res.json())?.message || '').includes('API rate limit exceeded')
+		) {
+			log('GitHub API rate limit exceeded.');
+		}
+		if (res.status === 404) {
 			log(`No package.json found for ${owner}/${repo}.`);
 			return null;
 		}
@@ -58,7 +70,7 @@ export async function fetchPackageDownloads(pkg: string): Promise<Stats | null> 
 	}
 }
 
-export async function newPackage(owner: string, repo: string): Promise<Package> {
+export async function newPackage(owner: string, repo: string, opts: Options): Promise<Package> {
 	const nullPkg = {
 		owner,
 		repo,
@@ -67,7 +79,7 @@ export async function newPackage(owner: string, repo: string): Promise<Package> 
 	} as Package;
 	let pkg = nullPkg;
 
-	const pkgJson = await fetchPackageJson(owner, repo);
+	const pkgJson = await fetchPackageJson(owner, repo, opts);
 	// When publishing to npm, name and version are required fields.
 	if (!pkgJson || !pkgJson.name || !pkgJson.version) return nullPkg;
 	// Check if the package.json has required properties for a VSCode package (https://code.visualstudio.com/api/references/extension-manifest).
@@ -113,7 +125,7 @@ export async function getPackage(owner: string, repo: string, opts: Options): Pr
 		(cache.name && !cache.stats) || // or the stats are missing but the package exists...
 		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // or no name & no stats and was last checked more than 12 hours ago?
 	) {
-		cache = await newPackage(owner, repo);
+		cache = await newPackage(owner, repo, opts);
 	}
 	return cache;
 }

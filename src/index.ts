@@ -33,6 +33,7 @@ const defaultOptions: Options = {
 	displayPeriod: 'lastDay',
 	cacheDuration: 7,
 	useNpmLogo: false,
+	accessToken: '',
 };
 
 chrome.storage.sync.get(Object.keys(defaultOptions), (opts: Partial<Options>) => {

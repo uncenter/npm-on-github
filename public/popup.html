@@ -19,7 +19,7 @@
 				flex-direction: column;
 				align-items: center;
 				justify-content: center;
-				gap: 1rem;
+				gap: 2rem;
 				padding: 1rem;
 			}
 
@@ -29,7 +29,7 @@
 				align-items: flex-start;
 				justify-content: center;
 				padding: 1rem;
-				gap: 1rem;
+				gap: 2rem;
 				width: -webkit-fill-available;
 			}
 
@@ -161,6 +161,11 @@
 				<label for="useNpmLogo">Use NPM logo</label>
 				<small>Use the NPM logo instead of the downloads icon on the button.</small>
 				<input type="checkbox" name="useNpmLogo" id="useNpmLogo" />
+			</div>
+			<div>
+				<label for="accessToken">GitHub API access token</label>
+				<small>If you regularly open a lot of repositories, you may get rate limited.</small>
+				<input type="text" name="accessToken" id="accessToken" />
 			</div>
 		</form>
 		<footer>
