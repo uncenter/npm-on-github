@@ -50,7 +50,8 @@ export const copyPlugin = (options = {}) => ({
 	setup(build) {
 		const src = options.src;
 		const dest = options.dest;
-		if (!src || !dest) throw new Error('Source and/or destination option(s) are undefined.');
+		if (!src || !dest)
+			throw new Error('Source and/or destination option(s) are undefined.');
 
 		build.onEnd(() =>
 			fs.cpSync(src, dest, {

@@ -10,9 +10,12 @@ async function fetchPackageJson(
 	opts: Options,
 ): Promise<PackageJson | null> {
 	try {
-		const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/package.json`, {
-			headers: opts.accessToken ? { Authorization: `Bearer ${opts.accessToken}` } : {},
-		});
+		const res = await fetch(
+			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
+			{
+				headers: opts.accessToken ? { Authorization: `Bearer ${opts.accessToken}` } : {},
+			},
+		);
 		if (
 			res.status === 403 &&
 			((await res.json())?.message || '').includes('API rate limit exceeded')
@@ -70,7 +73,11 @@ export async function fetchPackageDownloads(pkg: string): Promise<Stats | null> 
 	}
 }
 
-export async function newPackage(owner: string, repo: string, opts: Options): Promise<Package> {
+export async function newPackage(
+	owner: string,
+	repo: string,
+	opts: Options,
+): Promise<Package> {
 	const nullPkg = {
 		owner,
 		repo,
@@ -96,7 +103,10 @@ export async function newPackage(owner: string, repo: string, opts: Options): Pr
 		getOwnerAndRepo(pkgData.repository.url)?.owner === owner &&
 		getOwnerAndRepo(pkgData.repository.url)?.repo === repo;
 
-	if (repositoryMatches || (pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)) {
+	if (
+		repositoryMatches ||
+		(pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)
+	) {
 		pkg = {
 			owner,
 			repo,
@@ -109,7 +119,9 @@ export async function newPackage(owner: string, repo: string, opts: Options): Pr
 	} else {
 		log(
 			`Could not match package.json for ${owner}/${repo} to a package on npm (${
-				repositoryMatches ? 'name and version mismatch' : 'package.json repository URL mismatch'
+				repositoryMatches
+					? 'name and version mismatch'
+					: 'package.json repository URL mismatch'
 			}).`,
 		);
 	}
@@ -117,7 +129,11 @@ export async function newPackage(owner: string, repo: string, opts: Options): Pr
 	return pkg;
 }
 
-export async function getPackage(owner: string, repo: string, opts: Options): Promise<Package> {
+export async function getPackage(
+	owner: string,
+	repo: string,
+	opts: Options,
+): Promise<Package> {
 	let cache = getCache(owner, repo);
 	if (
 		!cache || // If no cache...

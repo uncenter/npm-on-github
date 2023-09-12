@@ -27,7 +27,8 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 					titleColor: '#fff',
 					bodyColor: '#fff',
 					callbacks: {
-						title: (context: any) => (context[0].label ? context[0].label : context[0].parsed.x),
+						title: (context: any) =>
+							context[0].label ? context[0].label : context[0].parsed.x,
 						label: (context: any) => context.parsed.y.toLocaleString(),
 					},
 				},
@@ -130,16 +131,18 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
         </details>
     </div>`;
 	injectionPoint.appendChild(li);
-	injectionPoint.querySelector('#npm-stats-refresh')?.addEventListener('click', async () => {
-		const newPkg = await newPackage(pkg.owner, pkg.repo, opts);
-		if (newPkg?.stats) {
-			chart.destroy();
-			injectContent(newPkg as Package, opts, true);
-			success('Refreshed stats successfully!');
-		} else {
-			warn('Failed to refresh stats.');
-		}
-	});
+	injectionPoint
+		.querySelector('#npm-stats-refresh')
+		?.addEventListener('click', async () => {
+			const newPkg = await newPackage(pkg.owner, pkg.repo, opts);
+			if (newPkg?.stats) {
+				chart.destroy();
+				injectContent(newPkg as Package, opts, true);
+				success('Refreshed stats successfully!');
+			} else {
+				warn('Failed to refresh stats.');
+			}
+		});
 	injectionPoint.querySelector('#npm-stats-close')?.addEventListener('click', () => {
 		injectionPoint.querySelector('#npm-stats-details')?.removeAttribute('open');
 	});

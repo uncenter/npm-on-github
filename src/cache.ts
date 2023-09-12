@@ -1,7 +1,9 @@
 import type { Options, Package } from './types';
 
 export function isFresh(cache: Package, opts: Options): boolean {
-	return cache ? cache.lastChecked > Date.now() - opts.cacheDuration * 24 * 60 * 60 * 1000 : false;
+	return cache
+		? cache.lastChecked > Date.now() - opts.cacheDuration * 24 * 60 * 60 * 1000
+		: false;
 }
 
 const cacheKey = (owner: string, repo: string) => `npm-on-github.${owner}/${repo}`;

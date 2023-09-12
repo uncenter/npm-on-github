@@ -3,9 +3,9 @@
 	<head>
 		<style>
 			html {
-				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-					'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-					'Noto Color Emoji';
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+					'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+					'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 				width: 500px;
 			}
 
@@ -152,8 +152,8 @@
 			<div>
 				<label for="cacheDuration">Cache duration</label>
 				<small
-					>The period of time to cache downloads for (days). 0 to fetch new downloads every time, 7
-					to cache for a week.
+					>The period of time to cache downloads for (days). 0 to fetch new downloads
+					every time, 7 to cache for a week.
 				</small>
 				<input type="number" name="cacheDuration" id="cacheDuration" min="0" max="7" />
 			</div>
@@ -164,7 +164,9 @@
 			</div>
 			<div>
 				<label for="accessToken">GitHub API access token</label>
-				<small>If you regularly open a lot of repositories, you may get rate limited.</small>
+				<small
+					>If you regularly open a lot of repositories, you may get rate limited.</small
+				>
 				<input type="text" name="accessToken" id="accessToken" />
 			</div>
 		</form>

@@ -255,7 +255,11 @@ declare namespace PackageJson {
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
-	export type Exports = null | string | Array<string | ExportConditions> | ExportConditions;
+	export type Exports =
+		| null
+		| string
+		| Array<string | ExportConditions>
+		| ExportConditions;
 
 	/**
 	Import map entries of a module, optionally with conditions and subpath imports.
@@ -626,7 +630,12 @@ declare namespace PackageJson {
 			The type of funding.
 			*/
 					type?: LiteralUnion<
-						'github' | 'opencollective' | 'patreon' | 'individual' | 'foundation' | 'corporation',
+						| 'github'
+						| 'opencollective'
+						| 'patreon'
+						| 'individual'
+						| 'foundation'
+						| 'corporation',
 						string
 					>;
 
