@@ -4,7 +4,8 @@ import { newPackage } from './package';
 import { formatNumber, success, warn } from './utils';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
-	const chart = new Chart(document.getElementById(canvasId) as HTMLCanvasElement, {
+	/* eslint-disable @typescript-eslint/no-explicit-any */
+	const chart = new Chart(document.querySelector(`#${canvasId}`) as HTMLCanvasElement, {
 		type: 'line',
 		data: {
 			labels: stats.full.downloads.map((d) => d.day),
@@ -26,9 +27,9 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 					backgroundColor: '#28a745',
 					titleColor: '#fff',
 					bodyColor: '#fff',
+
 					callbacks: {
-						title: (context: any) =>
-							context[0].label ? context[0].label : context[0].parsed.x,
+						title: (context: any) => context[0].label ?? context[0].parsed.x,
 						label: (context: any) => context.parsed.y.toLocaleString(),
 					},
 				},
@@ -36,7 +37,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 			scales: {
 				y: {
 					ticks: {
-						callback(value: any, index: any, values: any) {
+						callback(value: any) {
 							return value.toLocaleString();
 						},
 					},
@@ -44,17 +45,19 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 			},
 		},
 	});
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 	return chart;
 }
 
 export function injectContent(pkg: Package, opts: Options, refresh = false) {
 	if (!pkg.stats) return;
 	const injectionPoint = document.querySelector('ul.pagehead-actions');
-	if (!injectionPoint || (injectionPoint.querySelector('.npm-stats') && !refresh)) return;
+	if (!injectionPoint || (injectionPoint.querySelector('.npm-stats') && !refresh))
+		return;
 
 	let chart: Chart;
-	const observer = new MutationObserver((mutations) => {
-		if (!document.getElementById('npm-stats-chart')) return;
+	const observer = new MutationObserver(() => {
+		if (!document.querySelector('#npm-stats-chart')) return;
 		observer.disconnect();
 		chart = renderChart('npm-stats-chart', pkg.stats as Stats);
 	});
@@ -62,11 +65,11 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 	observer.observe(injectionPoint, { childList: true });
 
 	let li;
-	if (!document.querySelector('.npm-stats')) {
+	if (document.querySelector('.npm-stats')) {
+		li = document.querySelector('.npm-stats') as HTMLLIElement;
+	} else {
 		li = document.createElement('li');
 		li.className = 'npm-stats';
-	} else {
-		li = document.querySelector('.npm-stats') as HTMLLIElement;
 	}
 
 	// prettier-ignore
@@ -123,14 +126,14 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
                     <canvas id="npm-stats-chart"></canvas>
                 </div>
                 <footer class="SelectMenu-footer px-2">
-                    <button id="npm-stats-refresh" type="button" data-view-component="true" class="user-lists-menu-action js-user-lists-create-trigger btn-invisible btn btn-block text-normal rounded-1 px-2"${new Date().getTime() - pkg.lastChecked < 86400000 ? ' disabled' : ''}>
-                        <svg viewBox="0 0 16 16" width="16" height="16" data-view-component="true" class="octicon octicon-sync"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"></path></svg> Refresh stats 
+                    <button id="npm-stats-refresh" type="button" data-view-component="true" class="user-lists-menu-action js-user-lists-create-trigger btn-invisible btn btn-block text-normal rounded-1 px-2"${Date.now() - pkg.lastChecked < 86_400_000 ? ' disabled' : ''}>
+                        <svg viewBox="0 0 16 16" width="16" height="16" data-view-component="true" class="octicon octicon-sync"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"></path></svg> Refresh stats
                     </button>
                 </footer>
             </details-menu>
         </details>
     </div>`;
-	injectionPoint.appendChild(li);
+	injectionPoint.append(li);
 	injectionPoint
 		.querySelector('#npm-stats-refresh')
 		?.addEventListener('click', async () => {

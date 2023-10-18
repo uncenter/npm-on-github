@@ -8,9 +8,9 @@ export function isFresh(cache: Package, opts: Options): boolean {
 
 const cacheKey = (owner: string, repo: string) => `npm-on-github.${owner}/${repo}`;
 
-export function getCache(owner: string, repo: string): Package | null {
+export function getCache(owner: string, repo: string): Package | undefined {
 	const cache = localStorage.getItem(cacheKey(owner, repo));
-	return cache ? (JSON.parse(cache) as Package) : null;
+	return cache ? (JSON.parse(cache) as Package) : undefined;
 }
 
 export function setCache(owner: string, repo: string, cache: Package): void {

@@ -2,23 +2,31 @@
 	"name": "npm-on-github",
 	"description": "View NPM package downloads for Github repositories.",
 	"author": "uncenter <hi@uncenter.dev>",
+	"license": "MIT",
 	"scripts": {
 		"build": "node ./build.mjs",
 		"clean": "rimraf dist/",
 		"zip": "pnpm build && zip -r extension.zip dist/*",
 		"test": "vitest",
+		"lint": "eslint .",
 		"format": "prettier --write ."
 	},
-	"license": "MIT",
 	"dependencies": {
-		"chart.js": "^4.3.3"
+		"chart.js": "^4.4.0"
 	},
 	"devDependencies": {
-		"@types/chrome": "^0.0.243",
-		"esbuild": "^0.19.2",
-		"prettier": "^3.0.2",
-		"rimraf": "^5.0.1",
-		"vitest": "^0.34.2"
+		"@types/chrome": "^0.0.246",
+		"@typescript-eslint/eslint-plugin": "^6.7.5",
+		"@typescript-eslint/parser": "^6.7.5",
+		"esbuild": "^0.19.4",
+		"eslint": "^8.51.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-unicorn": "^48.0.1",
+		"eslint-plugin-vitest": "^0.3.2",
+		"prettier": "^3.0.3",
+		"rimraf": "^5.0.5",
+		"typescript": "^5.2.2",
+		"vitest": "^0.34.6"
 	},
-	"packageManager": "pnpm@8.7.0"
+	"packageManager": "pnpm@8.9.0"
 }

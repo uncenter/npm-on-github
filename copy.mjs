@@ -35,7 +35,7 @@ const getFileDigest = (path) => {
 	if (fs.existsSync(path) && !fs.statSync(path).isDirectory()) {
 		return getDigest(fs.readFileSync(path).toString());
 	}
-	return null;
+	return;
 };
 
 const filter = (src, dest) => {

@@ -11,13 +11,17 @@ describe('getOwnerAndRepo', () => {
 		});
 	});
 	test('should return owner and repo for git+https', () => {
-		expect(getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github.git')).toEqual({
+		expect(
+			getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github.git'),
+		).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
 	test('should return owner and repo for git+ssh', () => {
-		expect(getOwnerAndRepo('git+ssh://github.com/uncenter/npm-on-github.git')).toEqual({
+		expect(
+			getOwnerAndRepo('git+ssh://github.com/uncenter/npm-on-github.git'),
+		).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
@@ -40,17 +44,17 @@ describe('getOwnerAndRepo', () => {
 			repo: '.gitingore',
 		});
 	});
-	test('should return null if no owner or repo', () => {
-		expect(getOwnerAndRepo('git+https://github.com')).toEqual(null);
+	test('should return undefined if no owner or repo', () => {
+		expect(getOwnerAndRepo('git+https://github.com')).toBeUndefined();
 	});
 });
 
 describe('formatNumber', () => {
 	test('should format numbers', () => {
-		expect(formatNumber(1000000000)).toEqual('1b');
-		expect(formatNumber(1000000)).toEqual('1m');
-		expect(formatNumber(1000)).toEqual('1k');
-		expect(formatNumber(100)).toEqual('100');
+		expect(formatNumber(1_000_000_000)).toBe('1b');
+		expect(formatNumber(1_000_000)).toBe('1m');
+		expect(formatNumber(1000)).toBe('1k');
+		expect(formatNumber(100)).toBe('100');
 	});
 });
 
@@ -71,7 +75,7 @@ describe('cache', () => {
 						accessToken: '',
 					},
 				),
-			).toEqual(true);
+			).toBe(true);
 		});
 		test('should return false if cache is not fresh', () => {
 			expect(
@@ -88,7 +92,7 @@ describe('cache', () => {
 						accessToken: '',
 					},
 				),
-			).toEqual(false);
+			).toBe(false);
 		});
 	});
 });
