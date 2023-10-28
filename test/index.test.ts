@@ -10,42 +10,36 @@ describe('getOwnerAndRepo', () => {
 			repo: 'npm-on-github',
 		});
 	});
-	test('should return owner and repo for git+https', () => {
+	test('should return owner and repo with query parameter', () => {
 		expect(
-			getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github.git'),
+			getOwnerAndRepo(
+				'https://github.com/uncenter/npm-on-github?q=some-query-argument',
+			),
 		).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	test('should return owner and repo for git+ssh', () => {
+	test('should return owner and repo with hash', () => {
 		expect(
-			getOwnerAndRepo('git+ssh://github.com/uncenter/npm-on-github.git'),
+			getOwnerAndRepo('https://github.com/uncenter/npm-on-github#some-hash'),
 		).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
 		});
 	});
-	test('should return owner and repo for git', () => {
-		expect(getOwnerAndRepo('git://github.com/uncenter/npm-on-github.git')).toEqual({
+	test('should return owner and repo with query parameter and hash', () => {
+		expect(
+			getOwnerAndRepo(
+				'git://github.com/uncenter/npm-on-github?q=some-query-argument#some-hash',
+			),
+		).toEqual({
 			owner: 'uncenter',
 			repo: 'npm-on-github',
-		});
-	});
-	test('should return owner and repo with no .git', () => {
-		expect(getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github')).toEqual({
-			owner: 'uncenter',
-			repo: 'npm-on-github',
-		});
-	});
-	test('should return owner and repo if .git is in the middle', () => {
-		expect(getOwnerAndRepo('git+https://github.com/example/.gitingore')).toEqual({
-			owner: 'example',
-			repo: '.gitingore',
 		});
 	});
 	test('should return undefined if no owner or repo', () => {
-		expect(getOwnerAndRepo('git+https://github.com')).toBeUndefined();
+		expect(getOwnerAndRepo('https://github.com')).toBeUndefined();
 	});
 });
 
