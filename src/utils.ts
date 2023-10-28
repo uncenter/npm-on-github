@@ -9,6 +9,21 @@ export function getOwnerAndRepo(
 	if (owner && repo) return { owner: owner.toLowerCase(), repo: repo.toLowerCase() };
 }
 
+export function parseNpmPackageShorthand(shorthand: string) {
+	const [provider] = shorthand.split(':');
+	const [owner, repo] = (
+		provider === shorthand ? shorthand : shorthand.slice(provider.length + 1)
+	).split('/');
+
+	if (!owner || !repo) return;
+
+	return {
+		provider: provider === shorthand ? 'github' : provider,
+		owner,
+		repo,
+	};
+}
+
 export function formatNumber(num: number | string) {
 	num = Number(num);
 	if (num >= 1_000_000_000) {

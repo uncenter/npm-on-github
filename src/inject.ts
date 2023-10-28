@@ -1,5 +1,7 @@
 import type { Options, Package, Stats } from './types';
+
 import { Chart } from 'chart.js/auto';
+
 import { newPackage } from './package';
 import { formatNumber, success, warn } from './utils';
 

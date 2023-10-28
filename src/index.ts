@@ -1,4 +1,5 @@
 import type { Options, Package } from './types';
+
 import { injectContent } from './inject';
 import { getPackage } from './package';
 import { getOwnerAndRepo } from './utils';
@@ -37,13 +38,10 @@ const defaultOptions: Options = {
 };
 
 chrome.storage.sync.get(Object.keys(defaultOptions), (opts: Partial<Options>) => {
-	for (let i = 0; i < Object.keys(defaultOptions).length; i++) {
-		const key = Object.keys(defaultOptions)[i] as keyof Options;
-		if (opts[key] === undefined) {
-			opts[key] = defaultOptions[key];
-		}
-		chrome.storage.sync.set({ [key]: opts[key] });
+	const merged = { ...defaultOptions, ...opts } as const;
+	for (const [key, value] of Object.entries(merged)) {
+		chrome.storage.sync.set({ [key]: value });
 	}
-	processPage(opts as Options);
-	handleNavigation(opts as Options);
+	processPage(merged);
+	handleNavigation(merged);
 });

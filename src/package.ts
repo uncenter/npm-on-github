@@ -1,66 +1,95 @@
 import type { NpmResponse, Options, Package, Stats } from './types';
 import type { PackageJson } from './types/package-json';
+import type { Packument } from '@npm/types';
+
 import { getCache, setCache, isFresh } from './cache';
-import { getOwnerAndRepo } from './utils';
-import { log, warn, error } from './utils';
+import { getOwnerAndRepo, log, warn, error, parseNpmPackageShorthand } from './utils';
+
+function isMatchingOwnerRepo(owner: string, repo: string, packument: Packument) {
+	const repository = packument.repository;
+	if (!repository) return;
+
+	let _owner, _repo;
+
+	if (typeof repository === 'string') {
+		const parsedShorthand = parseNpmPackageShorthand(repository);
+		if (parsedShorthand && parsedShorthand?.provider === 'github') {
+			_owner = parsedShorthand.owner;
+			_repo = parsedShorthand.repo;
+		}
+	} else if (repository.url && repository.url.includes('github.com')) {
+		const ownerAndRepo = getOwnerAndRepo(repository.url);
+		_owner = ownerAndRepo?.owner;
+		_repo = ownerAndRepo?.repo;
+	}
+	return _owner === owner && _repo === repo;
+}
 
 async function fetchPackageJson(
 	owner: string,
 	repo: string,
 	opts: Options,
-): Promise<PackageJson | null> {
+): Promise<PackageJson | undefined> {
 	try {
 		const res = await fetch(
 			`https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
 			{
-				headers: opts.accessToken ? { Authorization: `Bearer ${opts.accessToken}` } : {},
+				headers: opts.accessToken
+					? { Authorization: `Bearer ${opts.accessToken}` }
+					: {},
 			},
 		);
+		const json = await res.json();
 		if (
 			res.status === 403 &&
-			((await res.json())?.message || '').includes('API rate limit exceeded')
+			(json?.message || '').includes('API rate limit exceeded')
 		) {
 			log('GitHub API rate limit exceeded.');
 		}
 		if (res.status === 404) {
 			log(`No package.json found for ${owner}/${repo}.`);
-			return null;
+			return;
 		}
 
-		const packageJson = JSON.parse(atob((await res.json()).content)) as PackageJson;
+		const packageJson = JSON.parse(atob(json.content)) as PackageJson;
 		return packageJson;
 	} catch {
-		return null;
+		return;
 	}
 }
 
-async function fetchNpmData(packageName: string): Promise<Record<string, any> | null> {
+async function fetchPackument(packageName: string): Promise<Packument | undefined> {
 	try {
 		const res = await fetch(`https://registry.npmjs.org/${packageName}`);
 		if (res.status === 404) {
 			log(`No package found on npm with the name ${packageName}.`);
-			return null;
+			return;
 		}
 
 		return await res.json();
 	} catch {
-		return null;
+		return;
 	}
 }
 
-export async function fetchPackageDownloads(pkg: string): Promise<Stats | null> {
+export async function fetchPackageDownloads(pkg: string): Promise<Stats | undefined> {
 	try {
-		const res = await fetch(`https://api.npmjs.org/downloads/range/last-month/${pkg}`);
-		if (res.status === 404) return null;
+		const res = await fetch(
+			`https://api.npmjs.org/downloads/range/last-month/${pkg}`,
+		);
+		if (res.status === 404) return;
 
 		const response = (await res.json()) as NpmResponse;
 		const { downloads } = response;
 
-		const lastDay = downloads[downloads.length - 1].downloads;
+		const lastDay = downloads.at(-1)?.downloads || 0;
 		const lastWeek = downloads
-			.slice(downloads.length - 7, downloads.length)
-			.reduce((sum: number, day: any) => sum + day.downloads, 0);
-		const lastMonth = downloads.reduce((sum: any, day: any) => sum + day.downloads, 0);
+			.slice(-7, downloads.length)
+			.reduce((sum: number, day: { downloads: number }) => sum + day.downloads, 0);
+		const lastMonth = downloads.reduce(
+			(sum: number, day: { downloads: number }) => sum + day.downloads,
+			0,
+		);
 
 		return {
 			full: response,
@@ -69,7 +98,7 @@ export async function fetchPackageDownloads(pkg: string): Promise<Stats | null> 
 			lastMonth,
 		};
 	} catch {
-		return null;
+		return;
 	}
 }
 
@@ -86,40 +115,40 @@ export async function newPackage(
 	} as Package;
 	let pkg = nullPkg;
 
-	const pkgJson = await fetchPackageJson(owner, repo, opts);
+	const packageJson = await fetchPackageJson(owner, repo, opts);
 	// When publishing to npm, name and version are required fields.
-	if (!pkgJson || !pkgJson.name || !pkgJson.version) return nullPkg;
+	if (!packageJson || !packageJson.name || !packageJson.version) return nullPkg;
 	// Check if the package.json has required properties for a VSCode package (https://code.visualstudio.com/api/references/extension-manifest).
-	if (Boolean(pkgJson.engines?.vscode && pkgJson.publisher)) {
-		warn('Error: package.json is for a Visual Studio Code extension.');
+	if (packageJson.engines?.vscode && packageJson.publisher) {
+		warn('Skipping: package.json is for a Visual Studio Code extension.');
 		return nullPkg;
 	}
 
-	const pkgData = await fetchNpmData(pkgJson.name);
-	if (!pkgData) return nullPkg;
+	const packument = await fetchPackument(packageJson.name);
+	if (!packument) return nullPkg;
 
-	const repositoryMatches =
-		pkgData?.repository?.url?.includes('github.com') &&
-		getOwnerAndRepo(pkgData.repository.url)?.owner === owner &&
-		getOwnerAndRepo(pkgData.repository.url)?.repo === repo;
+	const matchingOwnerRepo = isMatchingOwnerRepo(owner, repo, packument);
 
 	if (
-		repositoryMatches ||
-		(pkgJson.name === pkgData.name && pkgJson.version === pkgData.version)
+		matchingOwnerRepo ||
+		(packageJson.name === packument.name &&
+			(packageJson.version === Object.entries(packument.versions).at(-1)?.at(0) ||
+				packageJson.version === packument['dist-tags'].latest))
 	) {
 		pkg = {
 			owner,
 			repo,
-			name: pkgJson.name,
+			name: packageJson.name,
 			lastChecked: Date.now(),
-			stats: (await fetchPackageDownloads(pkgJson.name)) || undefined,
+			stats: (await fetchPackageDownloads(packageJson.name)) || undefined,
 		};
 
-		if (!pkg.stats) error(`Failed to fetch stats for "${pkgJson.name}" from npm.`);
+		if (!pkg.stats)
+			error(`Failed to fetch stats for "${packageJson.name}" from npm.`);
 	} else {
 		log(
 			`Could not match package.json for ${owner}/${repo} to a package on npm (${
-				repositoryMatches
+				matchingOwnerRepo
 					? 'name and version mismatch'
 					: 'package.json repository URL mismatch'
 			}).`,
@@ -139,7 +168,9 @@ export async function getPackage(
 		!cache || // If no cache...
 		!isFresh(cache, opts) || // or the cache is expired...
 		(cache.name && !cache.stats) || // or the stats are missing but the package exists...
-		(!cache.stats && !cache.name && cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // or no name & no stats and was last checked more than 12 hours ago?
+		(!cache.stats &&
+			!cache.name &&
+			cache.lastChecked < Date.now() - 12 * 60 * 60 * 1000) // or no name & no stats and was last checked more than 12 hours ago?
 	) {
 		cache = await newPackage(owner, repo, opts);
 	}

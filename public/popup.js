@@ -3,16 +3,16 @@ function saveSelection(event) {
 		chrome.storage.sync.set({ [event.target.id]: event.target.checked });
 		return;
 	}
-	let { value } = event.target;
+	let { value, id } = event.target;
 	if (event.target.type === 'number') {
 		value = +value;
 	}
-	chrome.storage.sync.set({ [event.target.id]: value });
+	chrome.storage.sync.set({ [id]: value });
 }
 
 function init() {
 	const elements = document.querySelectorAll('input, select');
-	elements.forEach((element) => {
+	for (const element of elements) {
 		const id = element.id;
 		element.addEventListener('change', saveSelection);
 		chrome.storage.sync.get(id, ({ [id]: value }) => {
@@ -26,7 +26,7 @@ function init() {
 				}
 			}
 		});
-	});
+	}
 }
 
 init();

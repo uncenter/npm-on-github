@@ -1,5 +1,6 @@
 {
 	"name": "npm-on-github",
+	"version": "0.1.0",
 	"description": "View NPM package downloads for Github repositories.",
 	"author": "uncenter <hi@uncenter.dev>",
 	"license": "MIT",
@@ -8,19 +9,22 @@
 		"clean": "rimraf dist/",
 		"zip": "pnpm build && zip -r extension.zip dist/*",
 		"test": "vitest",
-		"lint": "eslint .",
+		"lint": "tsc && eslint .",
+		"autofix": "eslint --fix .",
 		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"chart.js": "^4.4.0"
 	},
 	"devDependencies": {
+		"@npm/types": "^1.0.2",
 		"@types/chrome": "^0.0.246",
 		"@typescript-eslint/eslint-plugin": "^6.7.5",
 		"@typescript-eslint/parser": "^6.7.5",
 		"esbuild": "^0.19.4",
 		"eslint": "^8.51.0",
 		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-import": "^2.29.0",
 		"eslint-plugin-unicorn": "^48.0.1",
 		"eslint-plugin-vitest": "^0.3.2",
 		"prettier": "^3.0.3",
@@ -28,5 +32,5 @@
 		"typescript": "^5.2.2",
 		"vitest": "^0.34.6"
 	},
-	"packageManager": "pnpm@8.9.0"
+	"packageManager": "pnpm@8.10.0"
 }

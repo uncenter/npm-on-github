@@ -1,4 +1,5 @@
 import { build } from 'esbuild';
+
 import { copyPlugin } from './copy.mjs';
 
 await build({
