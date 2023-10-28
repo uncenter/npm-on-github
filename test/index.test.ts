@@ -38,6 +38,40 @@ describe('getOwnerAndRepo', () => {
 			repo: 'npm-on-github',
 		});
 	});
+	test('should return owner and repo for git+https', () => {
+		expect(
+			getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github.git'),
+		).toEqual({
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+	test('should return owner and repo for git+ssh', () => {
+		expect(
+			getOwnerAndRepo('git+ssh://github.com/uncenter/npm-on-github.git'),
+		).toEqual({
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+	test('should return owner and repo for git', () => {
+		expect(getOwnerAndRepo('git://github.com/uncenter/npm-on-github.git')).toEqual({
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+	test('should return owner and repo with no .git', () => {
+		expect(getOwnerAndRepo('git+https://github.com/uncenter/npm-on-github')).toEqual({
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+	test('should return owner and repo if repo name contains .git', () => {
+		expect(getOwnerAndRepo('https://github.com/example/.github')).toEqual({
+			owner: 'example',
+			repo: '.github',
+		});
+	});
 	test('should return undefined if no owner or repo', () => {
 		expect(getOwnerAndRepo('https://github.com')).toBeUndefined();
 	});
