@@ -6,13 +6,19 @@ View NPM package downloads right on GitHub.
 
 ## Installation
 
+Follow the instructions below for Chrome/Chromium browsers (only browser supported at the moment).
+
+### Chrome Web Store
+
+[NPM on GitHub is on the Chrome Web Store!](https://chrome.google.com/webstore/detail/npm-on-github/ldpbompbnpjmnfabebpbjohomchefogk)
+
+### Manually
+
 ```bash
 git clone https://github.com/uncenter/npm-on-github.git && cd npm-on-github
 pnpm install
 pnpm build
 ```
-
-Then, follow the instructions below for Chrome/Chromium browsers (only browser supported at the moment).
 
 1. Open the Extensions page by navigating to `chrome://extensions`.
 2. Enable Developer Mode by flipping the toggle switch labeled **Developer mode**.
