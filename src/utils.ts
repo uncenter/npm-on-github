@@ -1,21 +1,9 @@
 export function getOwnerAndRepo(
 	url: string,
 ): { owner: string; repo: string } | undefined {
-	const prefixes = ['git+https://', 'git+ssh://', 'git://'];
-
-	for (const prefix of prefixes) {
-		if (url.startsWith(prefix)) {
-			url = url.slice(prefix.length).replace(/\.git$/, '');
-			if (!url.startsWith('https://')) url = `https://` + url;
-		}
-	}
 	const [owner, repo] = new URL(url).pathname.split('/').filter(Boolean);
 
-	if (owner && repo) {
-		return { owner: owner.toLowerCase(), repo: repo.toLowerCase() };
-	}
-
-	return;
+	if (owner && repo) return { owner: owner.toLowerCase(), repo: repo.toLowerCase() };
 }
 
 export function formatNumber(num: number | string) {
