@@ -3,9 +3,13 @@ import type { Options, Package, Stats } from './types';
 import { Chart } from 'chart.js/auto';
 
 import { newPackage } from './package';
-import { formatNumber, success, warn } from './utils';
+import { formatNumber, getCSSVariable, success, warn } from './utils';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
+	const accentColor = getCSSVariable('--color-accent-fg');
+	const neutralColor = getCSSVariable('--color-neutral-emphasis');
+	const mutedColor = getCSSVariable('--color-border-default');
+
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const chart = new Chart(document.querySelector(`#${canvasId}`) as HTMLCanvasElement, {
 		type: 'line',
@@ -16,7 +20,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 					label: 'Downloads',
 					data: stats.full.downloads.map((d) => d.downloads),
 					borderWidth: 1,
-					borderColor: '#28a745',
+					borderColor: accentColor,
 				},
 			],
 		},
@@ -26,7 +30,7 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 					display: false,
 				},
 				tooltip: {
-					backgroundColor: '#28a745',
+					backgroundColor: accentColor,
 					titleColor: '#fff',
 					bodyColor: '#fff',
 
@@ -42,6 +46,18 @@ export function renderChart(canvasId: string, stats: Stats): Chart {
 						callback(value: any) {
 							return value.toLocaleString();
 						},
+						color: neutralColor,
+					},
+					grid: {
+						color: mutedColor,
+					},
+				},
+				x: {
+					ticks: {
+						color: neutralColor,
+					},
+					grid: {
+						color: mutedColor,
 					},
 				},
 			},

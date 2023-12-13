@@ -38,6 +38,10 @@ export function formatNumber(num: number | string) {
 	return `${num}`;
 }
 
+export function getCSSVariable(property: string) {
+	return getComputedStyle(document.body).getPropertyValue(property);
+}
+
 export function error(message: string) {
 	console.error(`%c[npm-on-github] ${message}`, 'color: red');
 }
