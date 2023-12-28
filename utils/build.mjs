@@ -1,6 +1,7 @@
 import { build } from 'esbuild';
 
-import { copyPlugin } from './copy.mjs';
+import { copyPlugin } from './plugins/copy.mjs';
+import { manifestPlugin } from './plugins/manifest.mjs';
 
 await build({
 	entryPoints: [{ out: 'content_script', in: 'src/index.ts' }],
@@ -10,6 +11,10 @@ await build({
 	plugins: [
 		copyPlugin({
 			src: './public/',
+			dest: './dist/',
+		}),
+		manifestPlugin({
+			src: './manifest.js',
 			dest: './dist/',
 		}),
 	],
