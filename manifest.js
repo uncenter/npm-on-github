@@ -1,6 +1,8 @@
 // @ts-check
 import pkg from './package.json' assert { type: 'json' };
 
+const title = 'NPM on GitHub';
+
 /**
  * @typedef {chrome.runtime.ManifestV3} ChromeManifest
  */
@@ -10,7 +12,7 @@ import pkg from './package.json' assert { type: 'json' };
  */
 const manifest = {
 	manifest_version: 3,
-	name: 'NPM on GitHub',
+	name: title,
 	version: pkg.version,
 	description: pkg.description,
 	icons: {
@@ -27,7 +29,7 @@ const manifest = {
 		},
 	],
 	action: {
-		default_title: 'NPM on GitHub',
+		default_title: title,
 		default_popup: 'popup.html',
 	},
 };
