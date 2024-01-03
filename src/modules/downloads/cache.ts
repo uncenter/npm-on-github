@@ -1,4 +1,5 @@
-import type { Options, Package } from './types';
+import type { Package } from './types';
+import type { Options } from '../../types';
 
 export function isFresh(cache: Package, opts: Options): boolean {
 	return cache

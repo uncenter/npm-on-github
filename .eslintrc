@@ -39,7 +39,8 @@
 		"unicorn/text-encoding-identifier-case": "off",
 		"unicorn/filename-case": "off",
 		"unicorn/numeric-separators-style": "off",
-		"unicorn/prevent-abbreviations": "off"
+		"unicorn/prevent-abbreviations": "off",
+		"unicorn/prefer-dom-node-dataset": "off"
 	},
 	"env": {
 		"browser": true,

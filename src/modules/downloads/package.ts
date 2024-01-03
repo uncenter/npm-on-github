@@ -1,5 +1,6 @@
-import type { NpmResponse, Options, Package, Stats } from './types';
+import type { NpmResponse, Package, Stats } from './types';
 import type { PackageJson } from './types/package-json';
+import type { Options } from '../../types';
 import type { Packument } from '@npm/types';
 
 import { log, warn, error } from '../../logger';
