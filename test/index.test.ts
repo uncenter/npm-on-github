@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import { isFresh } from '../src/cache';
-import { formatNumber, getOwnerAndRepo } from '../src/utils';
+import { isFresh } from '../src/modules/downloads/cache';
+import { formatNumber, getOwnerAndRepo } from '../src/modules/downloads/utils';
 
 describe('getOwnerAndRepo', () => {
 	test('should return owner and repo', () => {

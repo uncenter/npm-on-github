@@ -2,8 +2,10 @@ import type { NpmResponse, Options, Package, Stats } from './types';
 import type { PackageJson } from './types/package-json';
 import type { Packument } from '@npm/types';
 
+import { log, warn, error } from '../../logger';
+
 import { getCache, setCache, isFresh } from './cache';
-import { getOwnerAndRepo, log, warn, error, parseNpmPackageShorthand } from './utils';
+import { getOwnerAndRepo, parseNpmPackageShorthand } from './utils';
 
 function isMatchingOwnerRepo(owner: string, repo: string, packument: Packument) {
 	const repository = packument.repository;

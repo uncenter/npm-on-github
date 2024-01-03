@@ -1,8 +1,8 @@
-import type { Options, Package } from './types';
+import type { Options, Package } from './modules/downloads/types';
 
-import { injectContent } from './inject';
-import { getPackage } from './package';
-import { getOwnerAndRepo } from './utils';
+import { injectContent } from './modules/downloads/inject';
+import { getPackage } from './modules/downloads/package';
+import { getOwnerAndRepo } from './modules/downloads/utils';
 
 const processPage = async (opts: Options) => {
 	const { owner, repo } = getOwnerAndRepo(location.href) || {};
