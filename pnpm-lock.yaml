@@ -5,9 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  builtin-modules:
+    specifier: ^3.3.0
+    version: 3.3.0
   chart.js:
     specifier: ^4.4.1
     version: 4.4.1
+  detect-imports:
+    specifier: ^0.1.0
+    version: 0.1.0
 
 devDependencies:
   '@npm/types':
@@ -25,6 +31,9 @@ devDependencies:
   esbuild:
     specifier: ^0.19.11
     version: 0.19.11
+  esbuild-plugin-polyfill-node:
+    specifier: ^0.3.0
+    version: 0.3.0(esbuild@0.19.11)
   eslint:
     specifier: ^8.56.0
     version: 8.56.0
@@ -367,6 +376,10 @@ packages:
 
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+    dev: true
+
+  /@jspm/core@2.0.1:
+    resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
     dev: true
 
   /@kurkle/color@0.3.2:
@@ -972,7 +985,6 @@ packages:
   /builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
-    dev: true
 
   /cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
@@ -1143,6 +1155,10 @@ packages:
       object-keys: 1.1.1
     dev: true
 
+  /detect-imports@0.1.0:
+    resolution: {integrity: sha512-bqv177MZxPUwgQj+GDLMuQqTUvw79G7cpfgNxEAM6PzoepMARI5pGXLhUkfld8qvHOeQMQy+MptjiRbdALM4HQ==}
+    dev: false
+
   /diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1258,6 +1274,16 @@ packages:
       is-callable: 1.2.7
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+    dev: true
+
+  /esbuild-plugin-polyfill-node@0.3.0(esbuild@0.19.11):
+    resolution: {integrity: sha512-SHG6CKUfWfYyYXGpW143NEZtcVVn8S/WHcEOxk62LuDXnY4Zpmc+WmxJKN6GMTgTClXJXhEM5KQlxKY6YjbucQ==}
+    peerDependencies:
+      esbuild: '*'
+    dependencies:
+      '@jspm/core': 2.0.1
+      esbuild: 0.19.11
+      import-meta-resolve: 3.1.1
     dev: true
 
   /esbuild@0.19.11:
@@ -1825,6 +1851,10 @@ packages:
     dependencies:
       parent-module: 1.0.1
       resolve-from: 4.0.0
+    dev: true
+
+  /import-meta-resolve@3.1.1:
+    resolution: {integrity: sha512-qeywsE/KC3w9Fd2ORrRDUw6nS/nLwZpXgfrOc2IILvZYnCaEMd+D56Vfg9k4G29gIeVi3XKql1RQatME8iYsiw==}
     dev: true
 
   /imurmurhash@0.1.4:

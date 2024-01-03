@@ -1,15 +1,29 @@
-import type { Options, Package } from './modules/downloads/types';
+import type { Package } from './modules/downloads/types';
+import type { Options } from './types';
 
-import { injectContent } from './modules/downloads/inject';
+import { injectContent as injectDownloads } from './modules/downloads/inject';
 import { getPackage } from './modules/downloads/package';
 import { getOwnerAndRepo } from './modules/downloads/utils';
+import { injectContent as injectImportLinks } from './modules/import-links/inject';
 
 const processPage = async (opts: Options) => {
+	/* Downloads */
+
 	const { owner, repo } = getOwnerAndRepo(location.href) || {};
-	if (!owner || !repo) return;
-	const pkg = await getPackage(owner, repo, opts);
-	if (!pkg) return;
-	injectContent(pkg as Package, opts);
+
+	if (owner && repo) {
+		const pkg = await getPackage(owner, repo, opts);
+		if (pkg) injectDownloads(pkg as Package, opts);
+	}
+
+	/* Import Links */
+
+	// eslint-disable-next-line unicorn/better-regex
+	const IS_FILE_ON_GITHUB_REGEX = /(\.)([c|m]?[j|t]s[x]?)/;
+	if (IS_FILE_ON_GITHUB_REGEX.test(location.href)) {
+		console.log('Injecting import links!');
+		injectImportLinks();
+	}
 };
 
 const handleNavigation = (opts: Options) => {

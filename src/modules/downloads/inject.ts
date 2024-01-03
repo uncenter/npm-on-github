@@ -1,4 +1,5 @@
-import type { Options, Package, Stats } from './types';
+import type { Package, Stats } from './types';
+import type { Options } from '../../types';
 
 import { Chart } from 'chart.js/auto';
 

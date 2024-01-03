@@ -1,4 +1,5 @@
 import { build } from 'esbuild';
+import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 
 import { copyPlugin } from './plugins/copy.mjs';
 import { manifestPlugin } from './plugins/manifest.mjs';
@@ -17,5 +18,6 @@ await build({
 			src: './manifest.js',
 			dest: './dist/',
 		}),
+		polyfillNode(),
 	],
 });
