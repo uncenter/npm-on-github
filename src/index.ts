@@ -1,4 +1,5 @@
-import type { Options, Package } from './modules/downloads/types';
+import type { Package } from './modules/downloads/types';
+import type { Options } from './types';
 
 import { injectContent } from './modules/downloads/inject';
 import { getPackage } from './modules/downloads/package';
