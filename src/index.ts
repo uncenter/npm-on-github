@@ -35,6 +35,8 @@ const defaultOptions: Options = {
 	displayPeriod: 'lastDay',
 	cacheDuration: 7,
 	useNpmLogo: false,
+	displayLocation: 'before',
+	displayRelativeTo: 'fork',
 	accessToken: '',
 };
 

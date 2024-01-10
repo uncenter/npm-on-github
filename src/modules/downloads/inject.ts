@@ -145,7 +145,37 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 		</div>
 	`;
 
-	injectionPoint.append(li);
+	let prev;
+	let injected = false;
+	for (const [item, icon] of Object.entries({
+		sponsor: 'octicon-heart',
+		pin: 'octicon-pin',
+		watch: 'octicon-eye',
+		fork: 'octicon-repo-forked',
+		star: 'octicon-star-fill',
+	})) {
+		const curr = injectionPoint.querySelector(`li:has(.${icon})`);
+		if (curr) prev = curr;
+
+		if (curr && opts.displayRelativeTo === item) {
+			curr[opts.displayLocation](li);
+			injected = true;
+			break;
+		} else if (!curr && opts.displayRelativeTo === item && prev) {
+			prev.after(li);
+			injected = true;
+			break;
+		}
+	}
+
+	if (!injected) {
+		if (opts.displayLocation === 'before' && injectionPoint.firstChild) {
+			injectionPoint.firstChild.before(li);
+		} else {
+			injectionPoint.append(li);
+		}
+	}
+
 	injectionPoint
 		.querySelector('#npm-stats-refresh')
 		?.addEventListener('click', async () => {
