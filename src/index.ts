@@ -32,7 +32,7 @@ const handleNavigation = (opts: Options) => {
 };
 
 const defaultOptions: Options = {
-	displayPeriod: 'lastDay',
+	downloadsRange: 'lastDay',
 	cacheDuration: 7,
 	useNpmLogo: false,
 	displayLocation: 'before',

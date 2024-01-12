@@ -97,7 +97,7 @@ describe('cache', () => {
 						lastChecked: Date.now(),
 					},
 					{
-						displayPeriod: 'lastDay',
+						downloadsRange: 'lastDay',
 						cacheDuration: 1,
 						useNpmLogo: false,
 						displayLocation: 'before',
@@ -116,7 +116,7 @@ describe('cache', () => {
 						lastChecked: Date.now() - 2 * 24 * 60 * 60 * 1000,
 					},
 					{
-						displayPeriod: 'lastDay',
+						downloadsRange: 'lastDay',
 						cacheDuration: 1,
 						useNpmLogo: false,
 						displayLocation: 'before',

@@ -53,7 +53,8 @@
 				height: 1.75rem;
 			}
 
-			label {
+			label,
+			p {
 				font-weight: 500;
 				display: block;
 				color: #374151;
@@ -141,11 +142,9 @@
 	<body>
 		<form>
 			<div>
-				<label for="displayPeriod">Display period</label>
-				<small
-					>The period of time to display the downloads for on the button.</small
-				>
-				<select name="period" id="displayPeriod">
+				<label for="downloadsRange">Downloads range</label>
+				<small>The range of time to display download statistics for.</small>
+				<select id="downloadsRange">
 					<option value="lastDay">Last Day</option>
 					<option value="lastWeek">Last Week</option>
 					<option value="lastMonth">Last Month</option>
@@ -154,7 +153,7 @@
 			<div>
 				<label for="cacheDuration">Cache duration</label>
 				<small
-					>The period of time to cache downloads for (days). 0 to fetch new
+					>The period of time to cache downloads for, in days. 0 to fetch new
 					downloads every time, 7 to cache for a week.
 				</small>
 				<input
@@ -172,22 +171,29 @@
 				>
 				<input type="checkbox" name="useNpmLogo" id="useNpmLogo" />
 			</div>
-			<div>
-				<label for="displayLocation">Display location</label>
+			<div
+				style="
+					display: flex;
+					flex-direction: row;
+					align-items: end;
+					justify-content: start;
+					gap: 1ch;
+				"
+			>
+				<p>Display button</p>
 				<select name="displayLocation" id="displayLocation">
-					<option value="before">Before</option>
-					<option value="after">After</option>
+					<option value="before">before</option>
+					<option value="after">after</option>
 				</select>
-			</div>
-			<div>
-				<label for="displayRelativeTo">Display button relative to</label>
+				<p>the</p>
 				<select name="displayRelativeTo" id="displayRelativeTo">
-					<option value="sponsor">Sponsor</option>
-					<option value="pin">Pin</option>
-					<option value="watch">Watch</option>
-					<option value="fork">Fork</option>
-					<option value="star">Star</option>
+					<option value="sponsor">sponsor</option>
+					<option value="pin">pin</option>
+					<option value="watch">watch</option>
+					<option value="fork">fork</option>
+					<option value="star">star</option>
 				</select>
+				<p>button.</p>
 			</div>
 			<div>
 				<label for="accessToken">GitHub API access token</label>

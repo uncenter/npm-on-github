@@ -100,15 +100,15 @@ export function injectContent(pkg: Package, opts: Options, refresh = false) {
 		    <a href="https://www.npmjs.com/package/${pkg.name}" target="_blank" class="btn btn-sm btn-with-count tooltipped tooltipped-s BtnGroup-item" aria-label="View package on npmjs.com" ata-view-component="true">
 		        ${opts.useNpmLogo ? NPM_LOGO_SVG : /* html */ `${DOWNLOAD_ICON_SVG}<span data-view-component="true" class="d-inline"> Downloads </span>`}
 		        <span
-		            aria-label="${pkg.stats[opts.displayPeriod].toLocaleString()} npm downloads in the ${opts.displayPeriod.replace(
+		            aria-label="${pkg.stats[opts.downloadsRange].toLocaleString()} npm downloads in the ${opts.downloadsRange.replace(
                     'last', 'last ',
                 ).toLowerCase()}"
 		            data-turbo-replace="true"
-		            title="${pkg.stats[opts.displayPeriod].toLocaleString()}"
+		            title="${pkg.stats[opts.downloadsRange].toLocaleString()}"
 		            data-view-component="true"
 		            class="Counter js-social-count"
 		        >
-		            ${formatNumber(pkg.stats[opts.displayPeriod])}
+		            ${formatNumber(pkg.stats[opts.downloadsRange])}
 		        </span>
 		    </a>
 		    <details id="npm-stats-details" class="details-reset details-overlay BtnGroup-parent js-user-list-menu d-inline-block position-relative"${refresh ? ' open' : ''}>
