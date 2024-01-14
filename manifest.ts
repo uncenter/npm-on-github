@@ -1,16 +1,8 @@
-// @ts-check
 import pkg from './package.json' assert { type: 'json' };
 
 const title = 'NPM on GitHub';
 
-/**
- * @typedef {chrome.runtime.ManifestV3} ChromeManifest
- */
-
-/**
- * @type {ChromeManifest}
- */
-const manifest = {
+const manifest: chrome.runtime.ManifestV3 = {
 	manifest_version: 3,
 	name: title,
 	version: pkg.version,

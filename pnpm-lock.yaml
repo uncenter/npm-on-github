@@ -40,6 +40,9 @@ devDependencies:
   eslint-plugin-vitest:
     specifier: ^0.3.20
     version: 0.3.20(@typescript-eslint/eslint-plugin@6.17.0)(eslint@8.56.0)(typescript@5.3.3)(vitest@1.1.1)
+  jiti:
+    specifier: ^1.21.0
+    version: 1.21.0
   prettier:
     specifier: ^3.1.1
     version: 3.1.1
@@ -2008,6 +2011,11 @@ packages:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
+    dev: true
+
+  /jiti@1.21.0:
+    resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
+    hasBin: true
     dev: true
 
   /js-tokens@4.0.0:

@@ -2,6 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
+import jiti from 'jiti';
+
+const importTS = jiti(process.cwd(), {
+	interopDefault: true,
+	esmResolve: true,
+});
+
 export const manifestPlugin = (options = {}) => ({
 	name: 'esbuild-chrome-extension-manifest-plugin',
 	setup(build) {
@@ -12,9 +19,11 @@ export const manifestPlugin = (options = {}) => ({
 
 		build.onEnd(async () => {
 			const manifest = JSON.stringify(
-				await import(path.join(process.cwd(), src)).then(
-					(result) => result.default,
-				),
+				src.split('.').at(-1) === 'ts'
+					? importTS(path.join(process.cwd(), src))
+					: await import(path.join(process.cwd(), src)).then(
+							(result) => result.default,
+						),
 				undefined,
 				2,
 			);

@@ -14,7 +14,7 @@ await build({
 			dest: './dist/',
 		}),
 		manifestPlugin({
-			src: './manifest.js',
+			src: './manifest.ts',
 			dest: './dist/',
 		}),
 	],
