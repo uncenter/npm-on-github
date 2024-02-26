@@ -1,7 +1,7 @@
 export function getOwnerAndRepo(
 	url: string,
 ): { owner: string; repo: string } | undefined {
-	const [owner, repo] = new URL(url).pathname
+	const [owner, repo] = new URL(url.replace(/^git\+/, '')).pathname
 		.replace(/\.git$/, '')
 		.split('/')
 		.filter(Boolean);
