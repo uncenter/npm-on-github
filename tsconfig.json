@@ -1,18 +1,3 @@
 {
-	"compilerOptions": {
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"target": "ESNext",
-		"verbatimModuleSyntax": true,
-		"moduleDetection": "force",
-		"moduleResolution": "Bundler",
-		"module": "ESNext",
-		"noEmit": true,
-		"allowSyntheticDefaultImports": true,
-		"baseUrl": "src",
-		"paths": {
-			"~/*": ["*"]
-		}
-	}
+	"extends": "./.wxt/tsconfig.json"
 }

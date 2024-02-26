@@ -6,9 +6,13 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"build": "node ./utils/build.mjs",
-		"clean": "rimraf dist/",
-		"zip": "pnpm build && zip -r npm-on-github.zip dist/*",
+		"dev": "wxt",
+		"dev:firefox": "wxt --browser firefox",
+		"build": "wxt build",
+		"build:firefox": "wxt build --browser firefox",
+		"zip": "wxt zip",
+		"zip:firefox": "wxt zip --browser firefox",
+		"postinstall": "wxt prepare",
 		"test": "vitest",
 		"lint": "tsc && eslint .",
 		"format": "prettier --write ."
@@ -18,20 +22,17 @@
 	},
 	"devDependencies": {
 		"@npm/types": "^1.0.2",
-		"@types/chrome": "^0.0.254",
 		"@typescript-eslint/eslint-plugin": "^6.17.0",
 		"@typescript-eslint/parser": "^6.17.0",
-		"esbuild": "^0.19.11",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-unicorn": "^50.0.1",
 		"eslint-plugin-vitest": "^0.3.20",
-		"jiti": "^1.21.0",
 		"prettier": "^3.1.1",
-		"rimraf": "^5.0.5",
 		"typescript": "^5.3.3",
-		"vitest": "^1.1.1"
+		"vitest": "^1.1.1",
+		"wxt": "^0.17.3"
 	},
 	"packageManager": "pnpm@8.13.1+sha256.9e5f62ce5f2b7d4ceb3c2848f41cf0b33032c24d683c7088b53f62b1885fb246"
 }
