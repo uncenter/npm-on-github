@@ -1,13 +1,13 @@
 import type { Package, Stats } from './types';
-import type { Options } from '../../types';
+import type { Options } from '~/types';
 
 import { Chart } from 'chart.js/auto';
-
-import { success, warn } from '../../logger';
 
 import { DOWNLOAD_ICON_SVG, NPM_LOGO_SVG } from './icons';
 import { newPackage } from './package';
 import { formatNumber, getCSSVariable } from './utils';
+
+import { success, warn } from '~/logger';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
 	const accentColor = getCSSVariable('--color-accent-fg');

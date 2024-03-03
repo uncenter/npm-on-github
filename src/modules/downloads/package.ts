@@ -1,14 +1,14 @@
 import type { NpmResponse, Package, Stats } from './types';
 import type { PackageJson } from './types/package-json';
-import type { Options } from '../../types';
 import type { Packument } from '@npm/types';
-
-import { log, warn, error } from '../../logger';
+import type { Options } from '~/types';
 
 import { getCache, setCache, isFresh } from './cache';
 import { getOwnerAndRepo, parseNpmPackageShorthand } from './utils';
 
-function isMatchingOwnerRepo(owner: string, repo: string, packument: Packument) {
+import { log, warn, error } from '~/logger';
+
+export function isMatchingOwnerRepo(owner: string, repo: string, packument: Packument) {
 	const repository = packument.repository;
 	if (!repository) return;
 
@@ -28,7 +28,7 @@ function isMatchingOwnerRepo(owner: string, repo: string, packument: Packument) 
 	return _owner === owner && _repo === repo;
 }
 
-async function fetchPackageJson(
+export async function fetchPackageJson(
 	owner: string,
 	repo: string,
 	opts: Options,
@@ -61,7 +61,9 @@ async function fetchPackageJson(
 	}
 }
 
-async function fetchPackument(packageName: string): Promise<Packument | undefined> {
+export async function fetchPackument(
+	packageName: string,
+): Promise<Packument | undefined> {
 	try {
 		const res = await fetch(`https://registry.npmjs.org/${packageName}`);
 		if (res.status === 404) {

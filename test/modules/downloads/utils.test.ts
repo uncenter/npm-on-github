@@ -1,7 +1,10 @@
 import { describe, expect, test } from 'vitest';
 
-import { isFresh } from '../src/modules/downloads/cache';
-import { formatNumber, getOwnerAndRepo } from '../src/modules/downloads/utils';
+import {
+	formatNumber,
+	getOwnerAndRepo,
+	parseNpmPackageShorthand,
+} from '~/modules/downloads/utils';
 
 describe('getOwnerAndRepo', () => {
 	test('should return owner and repo', () => {
@@ -77,54 +80,29 @@ describe('getOwnerAndRepo', () => {
 	});
 });
 
+describe('parseNpmPackageShorthand', () => {
+	test('should return correct object result', () => {
+		expect(parseNpmPackageShorthand('github:uncenter/npm-on-github')).toStrictEqual({
+			provider: 'github',
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+
+	test('should return correct default provider', () => {
+		expect(parseNpmPackageShorthand('uncenter/npm-on-github')).toStrictEqual({
+			provider: 'github',
+			owner: 'uncenter',
+			repo: 'npm-on-github',
+		});
+	});
+});
+
 describe('formatNumber', () => {
 	test('should format numbers', () => {
 		expect(formatNumber(1_000_000_000)).toBe('1b');
 		expect(formatNumber(1_000_000)).toBe('1m');
 		expect(formatNumber(1000)).toBe('1k');
 		expect(formatNumber(100)).toBe('100');
-	});
-});
-
-describe('cache', () => {
-	describe('isFresh', () => {
-		test('should return true if cache is fresh', () => {
-			expect(
-				isFresh(
-					{
-						owner: 'uncenter',
-						repo: 'npm-on-github',
-						lastChecked: Date.now(),
-					},
-					{
-						downloadsRange: 'lastDay',
-						cacheDuration: 1,
-						useNpmLogo: false,
-						displayLocation: 'before',
-						displayRelativeTo: 'star',
-						accessToken: '',
-					},
-				),
-			).toBe(true);
-		});
-		test('should return false if cache is not fresh', () => {
-			expect(
-				isFresh(
-					{
-						owner: 'uncenter',
-						repo: 'npm-on-github',
-						lastChecked: Date.now() - 2 * 24 * 60 * 60 * 1000,
-					},
-					{
-						downloadsRange: 'lastDay',
-						cacheDuration: 1,
-						useNpmLogo: false,
-						displayLocation: 'before',
-						displayRelativeTo: 'star',
-						accessToken: '',
-					},
-				),
-			).toBe(false);
-		});
 	});
 });

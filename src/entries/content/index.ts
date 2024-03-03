@@ -1,13 +1,13 @@
-import type { Package } from '@/modules/downloads/types';
-import type { Options } from '@/types';
+import type { Package } from '~/modules/downloads/types';
+import type { Options } from '~/types';
 
 import { defineContentScript } from 'wxt/sandbox';
 import './styles.css';
 
-import { injectContent } from '@/modules/downloads/inject';
-import { getPackage } from '@/modules/downloads/package';
-import { getOwnerAndRepo } from '@/modules/downloads/utils';
-import { options } from '@/options';
+import { injectContent } from '~/modules/downloads/inject';
+import { getPackage } from '~/modules/downloads/package';
+import { getOwnerAndRepo } from '~/modules/downloads/utils';
+import { options } from '~/options';
 
 const processPage = async (opts: Options) => {
 	const { owner, repo } = getOwnerAndRepo(location.href) || {};

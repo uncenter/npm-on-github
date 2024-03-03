@@ -29,8 +29,11 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-unicorn": "^50.0.1",
 		"eslint-plugin-vitest": "^0.3.20",
+		"happy-dom": "^13.6.2",
+		"msw": "^2.2.2",
 		"prettier": "^3.1.1",
 		"typescript": "^5.3.3",
+		"vite-tsconfig-paths": "^4.3.1",
 		"vitest": "^1.1.1",
 		"wxt": "^0.17.3"
 	},

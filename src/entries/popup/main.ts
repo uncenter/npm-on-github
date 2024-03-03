@@ -1,6 +1,6 @@
-import type { Options } from '@/types';
+import type { Options } from '~/types';
 
-import { options } from '@/options';
+import { options } from '~/options';
 
 import './styles.css';
 
