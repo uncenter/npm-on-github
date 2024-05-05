@@ -10,9 +10,9 @@ import { formatNumber, getCSSVariable } from './utils';
 import { success, warn } from '~/logger';
 
 export function renderChart(canvasId: string, stats: Stats): Chart {
-	const accentColor = getCSSVariable('--color-accent-fg');
-	const neutralColor = getCSSVariable('--color-neutral-emphasis');
-	const mutedColor = getCSSVariable('--color-border-default');
+	const accentColor = getCSSVariable('--fgColor-accent');
+	const neutralColor = getCSSVariable('--fgColor-neutral');
+	const mutedColor = getCSSVariable('--borderColor-default');
 
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const chart = new Chart(document.querySelector(`#${canvasId}`) as HTMLCanvasElement, {
